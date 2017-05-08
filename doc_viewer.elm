@@ -1,4 +1,6 @@
 module DocumentViewer exposing (..)
+
+-- REFERENCES USED
 -- https://github.com/mpizenberg/elm_api_test/blob/master/src/Main.elm
 -- https://guide.elm-lang.org/interop/json.html
 -- https://robots.thoughtbot.com/decoding-json-structures-with-elm (GOOD, uses |:)
@@ -6,6 +8,8 @@ module DocumentViewer exposing (..)
 -- http://noredink.github.io/json-to-elm/
 -- http://package.elm-lang.org/packages/NoRedInk/elm-decode-pipeline/3.0.0/
 -- http://package.elm-lang.org/packages/elm-community/elm-test/latest
+
+-- IMPORTS
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -109,6 +113,8 @@ getAuthor author_identifier =
 
 author1 = {name = "Ezra Pound", identifier = "ezra_pound", photo_url = "https://upload.wikimedia.org/wikipedia/commons/8/87/Ezra_Pound_2.jpg", url = "http://www.internal.org/Ezra_Pound"}
 
+document0 = {title = "Oops!", author = "Nobody", text = "Sorry, we couldn't find that document"}
+
 document1 = {title = "Alba", author = "Ezra Pound", text = """As cool as the pale wet leaves
      of lily-of-the-valley
 She lay beside me in the dawn. """
@@ -165,10 +171,18 @@ viewTitle selectedDocument document  =
     ]
     [text document.title]
 
+viewAuthor : Author -> Html Msg
+viewAuthor  author  =
+  li [] [text author.name]
+
 view : Model -> Html Msg
 view model =
     div [] [
-      p [id "info"] [ text model.info]
+      div [id "authors"] [
+         h5 [] [text "Authors"]
+         , ul [] (List.map viewAuthor model.author_list)
+      ]
+      ,p [id "info"] [ text model.info]
       , h1 [] [ text "Poetry" ]
       , authorQueryForm model
       , br [] []
@@ -176,7 +190,9 @@ view model =
       , p [] [a [href model.current_author.url] [ text ("Poems of " ++ model.current_author.name)]]
       , ul [] (List.map (viewTitle model.selectedDocument) model.documents)
       , div [id "document"] [viewDocument model.selectedDocument]
+
     ]
+
 
 -- UPDATE
 
@@ -199,9 +215,9 @@ update msg model =
       GetDocuments (Ok serverReply) ->
         case (documentsRequestDecoder serverReply) of
           (Ok documents) ->
-            let selectedDocument =  case List.head documents of
+            let selectedDocument = case List.head documents of
               (Just document) -> document
-              (Nothing) -> document1
+              (Nothing) -> document0
             in
                ( {model | documents =  documents, selectedDocument = selectedDocument, info = "Documents: HTTP request OK"}, Cmd.none)
           (Err _) -> ( {model | info = "Could not decode server reply"}, Cmd.none)
