@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+
+  <head>
+    <style>
+      body { margin: 6em; width: 500px; font-family: Verdana; }
+      #elm-area { background-color: #ddf; padding: 1em; }
+      img { width: 200px;}
+      .selected { color: #d44; font-style: bold}
+      #heading { margin-top:2em; margin-bottom:0; font-style: bold; font-size:1.3em;}
+      #info { font-size: 0.65em; }
+      ul { list-style-type: none; margin:0; padding:0; font-size:0.85em;}
+      label { margin-right: 0.5em; }
+    </style>
+  </head>
+
+  <body>
+    <div id="elm-area"></div>
+    <script src="elm.js"></script>
+    <script>
+      Elm.DocumentViewer.embed(document.getElementById("elm-area"));
+    </script>
+  </body>
+
+</html>
