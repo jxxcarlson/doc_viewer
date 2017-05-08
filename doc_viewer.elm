@@ -37,8 +37,8 @@ type Msg
 -- DECODERS
 
 documentsRequestDecoder : String -> Result String (List Document)
-documentsRequestDecoder str =
-  Json.Decode.decodeString documentsDecoder str
+documentsRequestDecoder author_identifier =
+  Json.Decode.decodeString documentsDecoder author_identifier
 
 documentsDecoder : Decoder (List Document)
 documentsDecoder = Json.Decode.list documentDecoder
@@ -135,7 +135,7 @@ view model =
       , img [ src "https://upload.wikimedia.org/wikipedia/commons/8/87/Ezra_Pound_2.jpg"] []
       , p [] [a [href "http://www.internal.org/Ezra_Pound"] [ text "Poems of Ezra Pound"]]
       , ul [] (List.map (viewTitle model.selectedDocument) model.documents)
-      , div [] [viewDocument model.selectedDocument]
+      , div [id "document"] [viewDocument model.selectedDocument]
     ]
 
 -- UPDATE

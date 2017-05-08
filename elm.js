@@ -9189,8 +9189,8 @@ var _user$project$DocumentViewer$documentDecoder = A3(
 			_elm_lang$core$Json_Decode$string,
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$DocumentViewer$Document))));
 var _user$project$DocumentViewer$documentsDecoder = _elm_lang$core$Json_Decode$list(_user$project$DocumentViewer$documentDecoder);
-var _user$project$DocumentViewer$documentsRequestDecoder = function (str) {
-	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$DocumentViewer$documentsDecoder, str);
+var _user$project$DocumentViewer$documentsRequestDecoder = function (author_identifier) {
+	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$DocumentViewer$documentsDecoder, author_identifier);
 };
 var _user$project$DocumentViewer$Model = F5(
 	function (a, b, c, d, e) {
@@ -9449,7 +9449,11 @@ var _user$project$DocumentViewer$view = function (model) {
 											ctor: '::',
 											_0: A2(
 												_elm_lang$html$Html$div,
-												{ctor: '[]'},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html_Attributes$id('document'),
+													_1: {ctor: '[]'}
+												},
 												{
 													ctor: '::',
 													_0: _user$project$DocumentViewer$viewDocument(model.selectedDocument),
