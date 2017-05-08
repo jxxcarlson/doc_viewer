@@ -9153,10 +9153,17 @@ var _user$project$DocumentViewer$onKeyDown = function (tagger) {
 };
 var _user$project$DocumentViewer$document2 = {title: 'Metro', author: 'Ezra Pound', text: 'The apparition of these faces in the crowd;\n     Petals on a wet, black bough.'};
 var _user$project$DocumentViewer$document1 = {title: 'Alba', author: 'Ezra Pound', text: 'As cool as the pale wet leaves\n     of lily-of-the-valley\nShe lay beside me in the dawn. '};
+var _user$project$DocumentViewer$author1 = {name: 'Ezra Pound', identifier: 'ezra_pound', photo_url: 'https://upload.wikimedia.org/wikipedia/commons/8/87/Ezra_Pound_2.jpg', url: 'http://www.internal.org/Ezra_Pound'};
 var _user$project$DocumentViewer$initialModel = {
 	info: 'No messages',
 	input_text: 'ezra_pound',
 	author_identifier: 'ezra_pound',
+	current_author: _user$project$DocumentViewer$author1,
+	author_list: {
+		ctor: '::',
+		_0: _user$project$DocumentViewer$author1,
+		_1: {ctor: '[]'}
+	},
 	documents: {
 		ctor: '::',
 		_0: _user$project$DocumentViewer$document1,
@@ -9170,6 +9177,7 @@ var _user$project$DocumentViewer$initialModel = {
 };
 var _user$project$DocumentViewer$api = 'http://localhost:4000/api/v1/';
 var _user$project$DocumentViewer$getDocumentsUrlPrefix = A2(_elm_lang$core$Basics_ops['++'], _user$project$DocumentViewer$api, 'documents?author=');
+var _user$project$DocumentViewer$getAuthorUrlPrefix = A2(_elm_lang$core$Basics_ops['++'], _user$project$DocumentViewer$api, 'authors/');
 var _user$project$DocumentViewer$initialDocumentsUrl = A2(_elm_lang$core$Basics_ops['++'], _user$project$DocumentViewer$api, 'documents/author=ezra_pound');
 var _user$project$DocumentViewer$Document = F3(
 	function (a, b, c) {
@@ -9192,10 +9200,46 @@ var _user$project$DocumentViewer$documentsDecoder = _elm_lang$core$Json_Decode$l
 var _user$project$DocumentViewer$documentsRequestDecoder = function (author_identifier) {
 	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$DocumentViewer$documentsDecoder, author_identifier);
 };
-var _user$project$DocumentViewer$Model = F5(
-	function (a, b, c, d, e) {
-		return {info: a, input_text: b, author_identifier: c, documents: d, selectedDocument: e};
+var _user$project$DocumentViewer$Author = F4(
+	function (a, b, c, d) {
+		return {name: a, identifier: b, url: c, photo_url: d};
 	});
+var _user$project$DocumentViewer$authorDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'photo_url',
+	_elm_lang$core$Json_Decode$string,
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'url',
+		_elm_lang$core$Json_Decode$string,
+		A3(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+			'identifier',
+			_elm_lang$core$Json_Decode$string,
+			A3(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+				'name',
+				_elm_lang$core$Json_Decode$string,
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$DocumentViewer$Author)))));
+var _user$project$DocumentViewer$authorRequestDecoder = function (author_identifier) {
+	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$DocumentViewer$authorDecoder, author_identifier);
+};
+var _user$project$DocumentViewer$authorsDecoder = _elm_lang$core$Json_Decode$list(_user$project$DocumentViewer$authorDecoder);
+var _user$project$DocumentViewer$authorsRequestDecoder = function (author_identifier) {
+	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$DocumentViewer$authorsDecoder, author_identifier);
+};
+var _user$project$DocumentViewer$Model = F7(
+	function (a, b, c, d, e, f, g) {
+		return {info: a, input_text: b, author_identifier: c, current_author: d, author_list: e, documents: f, selectedDocument: g};
+	});
+var _user$project$DocumentViewer$GetAuthor = function (a) {
+	return {ctor: 'GetAuthor', _0: a};
+};
+var _user$project$DocumentViewer$getAuthor = function (author_identifier) {
+	var url = A2(_elm_lang$core$Basics_ops['++'], _user$project$DocumentViewer$getAuthorUrlPrefix, author_identifier);
+	var request = _elm_lang$http$Http$getString(url);
+	return A2(_elm_lang$http$Http$send, _user$project$DocumentViewer$GetAuthor, request);
+};
 var _user$project$DocumentViewer$GetDocuments = function (a) {
 	return {ctor: 'GetDocuments', _0: a};
 };
@@ -9230,18 +9274,65 @@ var _user$project$DocumentViewer$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{author_identifier: model.input_text, info: 'Enter pressed'}),
-					_1: _user$project$DocumentViewer$getDocuments(model.input_text)
+					_1: _user$project$DocumentViewer$getAuthor(model.input_text)
 				} : {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-			default:
+			case 'GetDocuments':
 				if (_p0._0.ctor === 'Ok') {
 					var _p1 = _user$project$DocumentViewer$documentsRequestDecoder(_p0._0._0);
 					if (_p1.ctor === 'Ok') {
+						var _p3 = _p1._0;
+						var selectedDocument = function () {
+							var _p2 = _elm_lang$core$List$head(_p3);
+							if (_p2.ctor === 'Just') {
+								return _p2._0;
+							} else {
+								return _user$project$DocumentViewer$document1;
+							}
+						}();
 						return {
 							ctor: '_Tuple2',
 							_0: _elm_lang$core$Native_Utils.update(
 								model,
-								{documents: _p1._0, info: 'HTTP request OK'}),
+								{documents: _p3, selectedDocument: selectedDocument, info: 'Documents: HTTP request OK'}),
 							_1: _elm_lang$core$Platform_Cmd$none
+						};
+					} else {
+						return {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								model,
+								{info: 'Could not decode server reply'}),
+							_1: _elm_lang$core$Platform_Cmd$none
+						};
+					}
+				} else {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								info: A2(
+									_elm_lang$core$Basics_ops['++'],
+									'Error on GET: ',
+									_elm_lang$core$Basics$toString(_elm_lang$core$Result$Err))
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				}
+			default:
+				if (_p0._0.ctor === 'Ok') {
+					var _p4 = _user$project$DocumentViewer$authorRequestDecoder(_p0._0._0);
+					if (_p4.ctor === 'Ok') {
+						var _p5 = _p4._0;
+						return {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								model,
+								{
+									current_author: _p5,
+									info: A2(_elm_lang$core$Basics_ops['++'], 'A.I: ', _p5.identifier)
+								}),
+							_1: _user$project$DocumentViewer$getDocuments(_p5.identifier)
 						};
 					} else {
 						return {
@@ -9392,75 +9483,65 @@ var _user$project$DocumentViewer$view = function (model) {
 					_1: {
 						ctor: '::',
 						_0: A2(
-							_elm_lang$html$Html$p,
+							_elm_lang$html$Html$br,
 							{ctor: '[]'},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text(model.author_identifier),
-								_1: {ctor: '[]'}
-							}),
+							{ctor: '[]'}),
 						_1: {
 							ctor: '::',
 							_0: A2(
-								_elm_lang$html$Html$br,
-								{ctor: '[]'},
+								_elm_lang$html$Html$img,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$src(model.current_author.photo_url),
+									_1: {ctor: '[]'}
+								},
 								{ctor: '[]'}),
 							_1: {
 								ctor: '::',
 								_0: A2(
-									_elm_lang$html$Html$img,
+									_elm_lang$html$Html$p,
+									{ctor: '[]'},
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$src('https://upload.wikimedia.org/wikipedia/commons/8/87/Ezra_Pound_2.jpg'),
+										_0: A2(
+											_elm_lang$html$Html$a,
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$href(model.current_author.url),
+												_1: {ctor: '[]'}
+											},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text(
+													A2(_elm_lang$core$Basics_ops['++'], 'Poems of ', model.current_author.name)),
+												_1: {ctor: '[]'}
+											}),
 										_1: {ctor: '[]'}
-									},
-									{ctor: '[]'}),
+									}),
 								_1: {
 									ctor: '::',
 									_0: A2(
-										_elm_lang$html$Html$p,
+										_elm_lang$html$Html$ul,
 										{ctor: '[]'},
-										{
-											ctor: '::',
-											_0: A2(
-												_elm_lang$html$Html$a,
-												{
-													ctor: '::',
-													_0: _elm_lang$html$Html_Attributes$href('http://www.internal.org/Ezra_Pound'),
-													_1: {ctor: '[]'}
-												},
-												{
-													ctor: '::',
-													_0: _elm_lang$html$Html$text('Poems of Ezra Pound'),
-													_1: {ctor: '[]'}
-												}),
-											_1: {ctor: '[]'}
-										}),
+										A2(
+											_elm_lang$core$List$map,
+											_user$project$DocumentViewer$viewTitle(model.selectedDocument),
+											model.documents)),
 									_1: {
 										ctor: '::',
 										_0: A2(
-											_elm_lang$html$Html$ul,
-											{ctor: '[]'},
-											A2(
-												_elm_lang$core$List$map,
-												_user$project$DocumentViewer$viewTitle(model.selectedDocument),
-												model.documents)),
-										_1: {
-											ctor: '::',
-											_0: A2(
-												_elm_lang$html$Html$div,
-												{
-													ctor: '::',
-													_0: _elm_lang$html$Html_Attributes$id('document'),
-													_1: {ctor: '[]'}
-												},
-												{
-													ctor: '::',
-													_0: _user$project$DocumentViewer$viewDocument(model.selectedDocument),
-													_1: {ctor: '[]'}
-												}),
-											_1: {ctor: '[]'}
-										}
+											_elm_lang$html$Html$div,
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$id('document'),
+												_1: {ctor: '[]'}
+											},
+											{
+												ctor: '::',
+												_0: _user$project$DocumentViewer$viewDocument(model.selectedDocument),
+												_1: {ctor: '[]'}
+											}),
+										_1: {ctor: '[]'}
 									}
 								}
 							}
@@ -9475,7 +9556,7 @@ var _user$project$DocumentViewer$main = _elm_lang$html$Html$program(
 		init: {ctor: '_Tuple2', _0: _user$project$DocumentViewer$initialModel, _1: _elm_lang$core$Platform_Cmd$none},
 		view: _user$project$DocumentViewer$view,
 		update: _user$project$DocumentViewer$update,
-		subscriptions: function (_p2) {
+		subscriptions: function (_p6) {
 			return _elm_lang$core$Platform_Sub$none;
 		}
 	})();

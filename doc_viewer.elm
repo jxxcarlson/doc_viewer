@@ -19,11 +19,14 @@ import Json.Decode.Pipeline as JPipeline exposing (decode, required, optional, h
 -- TYPES
 
 type alias Document = { title : String, author: String, text : String }
+type alias Author = { name : String, identifier: String, url: String, photo_url : String }
 
 type alias Model = {
      info: String,
      input_text: String,
      author_identifier: String,
+     current_author: Author,
+     author_list: List Author,
      documents: List Document,
      selectedDocument: Document
 }
@@ -33,6 +36,7 @@ type Msg
     | Input String
     | KeyDown Int
     | GetDocuments (Result Http.Error String)
+    | GetAuthor (Result Http.Error String)
 
 -- DECODERS
 
@@ -50,11 +54,33 @@ documentDecoder =
     |> JPipeline.required "author" string
     |> JPipeline.required "text" string
 
+
+authorRequestDecoder : String -> Result String (Author)
+authorRequestDecoder author_identifier =
+  Json.Decode.decodeString authorDecoder author_identifier
+
+
+authorsRequestDecoder : String -> Result String (List Author)
+authorsRequestDecoder author_identifier =
+  Json.Decode.decodeString authorsDecoder author_identifier
+
+authorsDecoder : Decoder (List Author)
+authorsDecoder = Json.Decode.list authorDecoder
+
+authorDecoder : Decoder Author
+authorDecoder =
+  decode Author
+    |> JPipeline.required "name" string
+    |> JPipeline.required "identifier" string
+    |> JPipeline.required "url" string
+    |> JPipeline.required "photo_url" string
+
 -- API
 
 api : String
 api = "http://localhost:4000/api/v1/"
 getDocumentsUrlPrefix = api ++ "documents?author="
+getAuthorUrlPrefix = api ++ "authors/"
 initialDocumentsUrl = api ++ "documents/author=ezra_pound"
 
 
@@ -68,7 +94,20 @@ getDocuments author_identifier =
   in
     Http.send GetDocuments request
 
+
+getAuthor : String -> Cmd Msg
+getAuthor author_identifier =
+  let
+    url =
+      getAuthorUrlPrefix ++ author_identifier
+    request =
+      Http.getString url
+  in
+    Http.send GetAuthor request
+
 -- INITIALIZATION
+
+author1 = {name = "Ezra Pound", identifier = "ezra_pound", photo_url = "https://upload.wikimedia.org/wikipedia/commons/8/87/Ezra_Pound_2.jpg", url = "http://www.internal.org/Ezra_Pound"}
 
 document1 = {title = "Alba", author = "Ezra Pound", text = """As cool as the pale wet leaves
      of lily-of-the-valley
@@ -83,6 +122,8 @@ initialModel = {
      info = "No messages"
      , input_text = "ezra_pound"
      , author_identifier = "ezra_pound"
+     , current_author = author1
+     , author_list = [author1]
      , documents = [ document1, document2 ]
      , selectedDocument = document1
   }
@@ -130,10 +171,9 @@ view model =
       p [id "info"] [ text model.info]
       , h1 [] [ text "Poetry" ]
       , authorQueryForm model
-      , p [] [ text model.author_identifier]
       , br [] []
-      , img [ src "https://upload.wikimedia.org/wikipedia/commons/8/87/Ezra_Pound_2.jpg"] []
-      , p [] [a [href "http://www.internal.org/Ezra_Pound"] [ text "Poems of Ezra Pound"]]
+      , img [ src model.current_author.photo_url] []
+      , p [] [a [href model.current_author.url] [ text ("Poems of " ++ model.current_author.name)]]
       , ul [] (List.map (viewTitle model.selectedDocument) model.documents)
       , div [id "document"] [viewDocument model.selectedDocument]
     ]
@@ -152,16 +192,26 @@ update msg model =
       KeyDown key ->
         if key == 13 then
           ( {model | author_identifier = model.input_text, info = "Enter pressed"}
-          , getDocuments model.input_text
+          , getAuthor model.input_text
           )
         else
           ( model, Cmd.none )
       GetDocuments (Ok serverReply) ->
         case (documentsRequestDecoder serverReply) of
-          (Ok documents) -> ( {model | documents =  documents, info = "HTTP request OK"}, Cmd.none)
+          (Ok documents) ->
+            let selectedDocument =  case List.head documents of
+              (Just document) -> document
+              (Nothing) -> document1
+            in
+               ( {model | documents =  documents, selectedDocument = selectedDocument, info = "Documents: HTTP request OK"}, Cmd.none)
           (Err _) -> ( {model | info = "Could not decode server reply"}, Cmd.none)
-
       GetDocuments (Err _) ->
+        ( {model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )
+      GetAuthor (Ok serverReply) ->
+        case (authorRequestDecoder serverReply) of
+          (Ok author) -> ( {model | current_author =  author, info = "A.I: " ++ author.identifier}, getDocuments author.identifier)
+          (Err _) -> ( {model | info = "Could not decode server reply"}, Cmd.none)
+      GetAuthor (Err _) ->
         ( {model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )
 
 -- MAIN
