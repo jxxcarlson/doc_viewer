@@ -29,18 +29,22 @@ type alias Model = {
      info: String,
      input_text: String,
      author_identifier: String,
-     current_author: Author,
-     author_list: List Author,
+     selectedAuthor: Author,
+     authors: List Author,
      documents: List Document,
      selectedDocument: Document
 }
 
 type Msg
   = SelectDocument Document
+    | SelectAuthor Author
     | Input String
     | KeyDown Int
     | GetDocuments (Result Http.Error String)
     | GetAuthor (Result Http.Error String)
+    | GetAuthors (Result Http.Error String)
+    | GetAllAuthors
+
 
 -- DECODERS
 
@@ -85,6 +89,7 @@ api : String
 api = "http://localhost:4000/api/v1/"
 getDocumentsUrlPrefix = api ++ "documents?author="
 getAuthorUrlPrefix = api ++ "authors/"
+getAuthorsUrlPrefix = api ++ "authors?author="
 initialDocumentsUrl = api ++ "documents/author=ezra_pound"
 
 
@@ -109,6 +114,16 @@ getAuthor author_identifier =
   in
     Http.send GetAuthor request
 
+getAuthors : String -> Cmd Msg
+getAuthors author_identifier =
+  let
+    url =
+      getAuthorsUrlPrefix ++ author_identifier
+    request =
+      Http.getString url
+  in
+    Http.send GetAuthors request
+
 -- INITIALIZATION
 
 author1 = {name = "Ezra Pound", identifier = "ezra_pound", photo_url = "https://upload.wikimedia.org/wikipedia/commons/8/87/Ezra_Pound_2.jpg", url = "http://www.internal.org/Ezra_Pound"}
@@ -128,8 +143,8 @@ initialModel = {
      info = "No messages"
      , input_text = "ezra_pound"
      , author_identifier = "ezra_pound"
-     , current_author = author1
-     , author_list = [author1]
+     , selectedAuthor = author1
+     , authors = [author1]
      , documents = [ document1, document2 ]
      , selectedDocument = document1
   }
@@ -139,7 +154,8 @@ initialModel = {
 authorQueryForm : Model -> Html Msg
 authorQueryForm model =
   div [ id "authorForm"] [
-    label [for "author_identifier"] [text "Author"]
+    label [for "author_identifier", id "searchLabel"] [text "Search"]
+    , br [] []
     , input
       [id "author_identifier"
       , type_ "text"
@@ -148,6 +164,7 @@ authorQueryForm model =
       , onKeyDown KeyDown
       ]
       []
+      , button [onClick GetAllAuthors] [text "All"]
   ]
 
 onKeyDown : (Int -> msg) -> Attribute msg
@@ -156,6 +173,26 @@ onKeyDown tagger =
 
 
 -- VIEW
+
+authorSidebar : Model -> Html Msg
+authorSidebar model =
+  div [id "authors"] [
+     h3 [] [text "Authors"]
+     , authorQueryForm model
+     , br [] []
+     , ul [] (List.map (viewAuthor model.selectedAuthor) model.authors)
+  ]
+
+documentViewer : Model -> Html Msg
+documentViewer model =
+  div [id "documentViewer"] [
+     h1 [] [ text "Poetry" ]
+    , br [] []
+    , img [ src model.selectedAuthor.photo_url] []
+    , p [] [a [href model.selectedAuthor.url] [ text ("Poems of " ++ model.selectedAuthor.name)]]
+    , ul [] (List.map (viewTitle model.selectedDocument) model.documents)
+    , div [id "document"] [viewDocument model.selectedDocument]
+  ]
 
 viewDocument : Document -> Html msg
 viewDocument document =
@@ -171,26 +208,18 @@ viewTitle selectedDocument document  =
     ]
     [text document.title]
 
-viewAuthor : Author -> Html Msg
-viewAuthor  author  =
-  li [] [text author.name]
+viewAuthor : Author -> Author -> Html Msg
+viewAuthor  selectedAuthor author  =
+  li [classList [ ( "selected", selectedAuthor.name == author.name ) ]
+    , onClick (SelectAuthor author)
+    ] [text author.name]
 
 view : Model -> Html Msg
 view model =
     div [] [
-      div [id "authors"] [
-         h5 [] [text "Authors"]
-         , ul [] (List.map viewAuthor model.author_list)
-      ]
-      ,p [id "info"] [ text model.info]
-      , h1 [] [ text "Poetry" ]
-      , authorQueryForm model
-      , br [] []
-      , img [ src model.current_author.photo_url] []
-      , p [] [a [href model.current_author.url] [ text ("Poems of " ++ model.current_author.name)]]
-      , ul [] (List.map (viewTitle model.selectedDocument) model.documents)
-      , div [id "document"] [viewDocument model.selectedDocument]
-
+      p [id "info"] [ text model.info]
+      , authorSidebar model
+      , documentViewer model
     ]
 
 
@@ -201,6 +230,9 @@ update msg model =
     case msg of
       SelectDocument document ->
         ( { model | selectedDocument = document }, Cmd.none )
+      SelectAuthor author ->
+        ( { model | selectedAuthor = author }, getDocuments author.identifier )
+
       Input text ->
         ( {model | input_text = text }
         , Cmd.none
@@ -208,10 +240,11 @@ update msg model =
       KeyDown key ->
         if key == 13 then
           ( {model | author_identifier = model.input_text, info = "Enter pressed"}
-          , getAuthor model.input_text
+          , getAuthors model.input_text  -- getAuthor model.input_text
           )
         else
           ( model, Cmd.none )
+
       GetDocuments (Ok serverReply) ->
         case (documentsRequestDecoder serverReply) of
           (Ok documents) ->
@@ -223,14 +256,21 @@ update msg model =
           (Err _) -> ( {model | info = "Could not decode server reply"}, Cmd.none)
       GetDocuments (Err _) ->
         ( {model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )
+
       GetAuthor (Ok serverReply) ->
         case (authorRequestDecoder serverReply) of
-          (Ok author) -> ( {model | current_author =  author, info = "A.I: " ++ author.identifier}, getDocuments author.identifier)
+          (Ok author) -> ( {model | selectedAuthor =  author, info = "A.I: " ++ author.identifier}, getDocuments author.identifier)
           (Err _) -> ( {model | info = "Could not decode server reply"}, Cmd.none)
       GetAuthor (Err _) ->
         ( {model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )
-
--- MAIN
+      GetAuthors (Ok serverReply) ->
+        case (authorsRequestDecoder serverReply) of
+          (Ok authors) -> ( {model | authors =  authors, info = "Author list loaded"}, Cmd.none)
+          (Err _) -> ( {model | info = "Could not decode server reply"}, Cmd.none)
+      GetAuthors (Err _) ->
+        ( {model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )-- MAIN
+      GetAllAuthors ->
+        ( {model | input_text = "all" } , getAuthors "all" )
 
 main : Program Never Model Msg
 main =

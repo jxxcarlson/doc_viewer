@@ -1,1 +1,22 @@
 elm-make doc_viewer.elm  --output elm.js
+
+https://github.com/srid/heroku-buildpack-elm
+https://github.com/srid/elm-todomvc/blob/heroku/app.json
+
+heroku create elm-docviewer
+https://elm-docviewer.herokuapp.com/ | https://git.heroku.com/elm-docviewer.git
+
+heroku buildpacks:add https://github.com/hone/heroku-buildpack-static
+heroku buildpacks:add https://github.com/srid/heroku-buildpack-elm
+
+heroku buildpacks:add https://github.com/drync/heroku-buildpack-elm.git
+heroku buildpacks:add https://github.com/heroku/heroku-buildpack-nodejs#v83
+
+https://becoming-functional.com/serving-elm-assets-from-a-phoenix-app-ef328c63b236
+
+== Architecture
+
+http://www.lambdacat.com/road-to-elm-structuring-your-application/
+https://github.com/foxdonut/adventures-reactive-web-dev/tree/master/client-elm
+
+https://dev.to/rtfeldman/tour-of-an-open-source-elm-spa[RTFeldman SPA]
