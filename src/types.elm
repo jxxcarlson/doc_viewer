@@ -1,6 +1,7 @@
 module Types exposing(..)
 
 import Http
+import Navigation
 
 type alias Document = { title : String, author: String, text : String }
 type alias Author = { name : String, identifier: String, url: String, photo_url : String }
@@ -24,3 +25,8 @@ type Msg
     | GetAuthor (Result Http.Error String)
     | GetAuthors (Result Http.Error String)
     | GetAllAuthors
+
+type Route
+   = ReaderRoute
+   | EditorRoute
+   | NotFoundRoute
