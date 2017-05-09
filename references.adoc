@@ -1,0 +1,8 @@
+-- REFERENCES USED
+-- https://github.com/mpizenberg/elm_api_test/blob/master/src/Main.elm
+-- https://guide.elm-lang.org/interop/json.html
+-- https://robots.thoughtbot.com/decoding-json-structures-with-elm (GOOD, uses |:)
+-- http://tylerscode.com/2016/06/decoding-json-elm/ (GOOD!)
+-- http://noredink.github.io/json-to-elm/
+-- http://package.elm-lang.org/packages/NoRedInk/elm-decode-pipeline/3.0.0/
+-- http://package.elm-lang.org/packages/elm-community/elm-test/latest

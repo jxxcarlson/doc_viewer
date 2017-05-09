@@ -1,5 +1,8 @@
 elm-make doc_viewer.elm  --output elm.js
 
+
+== Heroku
+
 https://github.com/srid/heroku-buildpack-elm
 https://github.com/srid/elm-todomvc/blob/heroku/app.json
 
@@ -19,4 +22,13 @@ https://becoming-functional.com/serving-elm-assets-from-a-phoenix-app-ef328c63b2
 http://www.lambdacat.com/road-to-elm-structuring-your-application/
 https://github.com/foxdonut/adventures-reactive-web-dev/tree/master/client-elm
 
-https://dev.to/rtfeldman/tour-of-an-open-source-elm-spa[RTFeldman SPA]
+== RT Feldman
+
+
+- https://dev.to/rtfeldman/tour-of-an-open-source-elm-spa[RTFeldman SPA]
+- https://github.com/rtfeldman/elm-spa-example[SPA EXAMPLE]
+
+== Learning/Resources
+
+- https://guide.elm-lang.org/[Guide]
+- http://package.elm-lang.org/packages/rtfeldman/elm-css/latest[elm-css]
