@@ -1,4 +1,4 @@
-module Routing exposing(..)
+module Routing exposing(parseLocation)
 
 import Navigation exposing (Location)
 import Types exposing (Route(..))
@@ -9,8 +9,8 @@ matchers : Parser (Route -> a) a
 matchers =
     oneOf
         [ map ReaderRoute top
-        , map EditorRoute (s "edit" </> string)
-        , map NewNote (s "new")
+        , map EditorRoute (s "edit")
+        , map NewDocumentRoute (s "new")
         ]
 
 

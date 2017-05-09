@@ -16,8 +16,7 @@ document2 = { title = "Metro", author = "Ezra Pound", text = """The apparition o
 
 initialModel : Model
 initialModel = {
-     route = ReaderRoute
-     , info = "No messages"
+     info = "No messages"
      , input_text = "ezra_pound"
      , author_identifier = "ezra_pound"
      , selectedAuthor = author1

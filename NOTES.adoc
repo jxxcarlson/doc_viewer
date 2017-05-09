@@ -28,7 +28,6 @@ https://github.com/foxdonut/adventures-reactive-web-dev/tree/master/client-elm
 
 == RT Feldman
 
-
 - https://dev.to/rtfeldman/tour-of-an-open-source-elm-spa[RTFeldman SPA]
 - https://github.com/rtfeldman/elm-spa-example[SPA EXAMPLE]
 
