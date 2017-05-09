@@ -10044,15 +10044,14 @@ var _user$project$Data_Document$documentsRequestDecoder = function (author_ident
 	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Data_Document$documentsDecoder, author_identifier);
 };
 
-var _user$project$Data_Init$document2 = {title: 'Metro', author: 'Ezra Pound', text: 'The apparition of these faces in the crowd;\n     Petals on a wet, black bough.'};
-var _user$project$Data_Init$document1 = {title: 'Alba', author: 'Ezra Pound', text: 'As cool as the pale wet leaves\n     of lily-of-the-valley\nShe lay beside me in the dawn. '};
+var _user$project$Data_Init$document1 = {title: 'Jabberwocky', author: 'Lewis Carroll', text: '‘Twas brillig, and the slithy toves\n   Did gyre and gimble in the wabe;\nAll mimsy were the borogoves,\n   And the mome raths outgrabe.\n\n“Beware the Jabberwock, my son\n   The jaws that bite, the claws that catch!\nBeware the Jubjub bird, and shun\n   The frumious Bandersnatch!”\n\nHe took his vorpal sword in hand;\n   Long time the manxome foe he sought—\nSo rested he by the Tumtum tree,\n   And stood awhile in thought.\n\nAnd, as in uffish thought he stood,\n   The Jabberwock, with eyes of flame,\nCame whiffling through the tulgey wood,\n   And burbled as it came!\n\nOne, two! One, two! And through and through\n   The vorpal blade went snicker-snack!\nHe left it dead, and with its head\n   He went galumphing back.\n\n“And hast thou slain the Jabberwock?\n   Come to my arms, my beamish boy!\nO frabjous day! Callooh! Callay!”\n   He chortled in his joy.\n\n‘Twas brillig, and the slithy toves\n   Did gyre and gimble in the wabe;\nAll mimsy were the borogoves,\n   And the mome raths outgrabe.\n'};
 var _user$project$Data_Init$document0 = {title: 'Oops!', author: 'Nobody', text: 'Sorry, we couldn\'t find that document'};
-var _user$project$Data_Init$author1 = {name: 'Ezra Pound', identifier: 'ezra_pound', photo_url: 'https://upload.wikimedia.org/wikipedia/commons/8/87/Ezra_Pound_2.jpg', url: 'http://www.internal.org/Ezra_Pound'};
+var _user$project$Data_Init$author1 = {name: 'Lewis Carroll', identifier: 'lewis_carroll', photo_url: 'http://orig04.deviantart.net/8cd4/f/2011/167/8/a/jabberwocky_by_natzuurjk-d3j49so.png', url: 'https://www.poetryfoundation.org/poems-and-poets/poems/detail/42916'};
 var _user$project$Data_Init$initialModel = {
 	route: _user$project$Types$ReaderRoute,
 	info: 'No messages',
-	input_text: 'ezra_pound',
-	author_identifier: 'ezra_pound',
+	input_text: 'Carroll',
+	author_identifier: 'Carroll',
 	selectedAuthor: _user$project$Data_Init$author1,
 	authors: {
 		ctor: '::',
@@ -10062,11 +10061,7 @@ var _user$project$Data_Init$initialModel = {
 	documents: {
 		ctor: '::',
 		_0: _user$project$Data_Init$document1,
-		_1: {
-			ctor: '::',
-			_0: _user$project$Data_Init$document2,
-			_1: {ctor: '[]'}
-		}
+		_1: {ctor: '[]'}
 	},
 	selectedDocument: _user$project$Data_Init$document1
 };
@@ -10270,7 +10265,11 @@ var _user$project$Views_Form$authorQueryForm = function (model) {
 							{
 								ctor: '::',
 								_0: _elm_lang$html$Html_Events$onClick(_user$project$Types$GetAllAuthors),
-								_1: {ctor: '[]'}
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$id('allAuthorsButton'),
+									_1: {ctor: '[]'}
+								}
 							},
 							{
 								ctor: '::',

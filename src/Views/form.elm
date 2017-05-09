@@ -22,7 +22,7 @@ authorQueryForm model =
       , onKeyDown KeyDown
       ]
       []
-      , button [onClick GetAllAuthors] [text "All"]
+      , button [onClick GetAllAuthors, id "allAuthorsButton"] [text "All"]
   ]
 
 onKeyDown : (Int -> msg) -> Attribute msg
