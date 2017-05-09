@@ -6,10 +6,16 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events as HE exposing(onClick)
 
+buttonBar model =
+  div [id "buttonBar"] [
+     button [onClick GoToReader] [text "Read"]
+  ]
 
 newDocument model =
   div [] [
-    button [onClick GoToReader] [text "Read"]
-    , h3 [] [ text "New Document"]
-    , p [] [ text "Under construction ..."]
+    buttonBar model,
+    div [id "newDocument"] [
+      h3 [] [ text "New Document"]
+      , p [] [ text "Under construction ..."]
+    ]
    ]

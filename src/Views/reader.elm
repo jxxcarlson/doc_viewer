@@ -9,11 +9,16 @@ import Html.Events as HE exposing(onClick)
 import Views.Document exposing(documentViewer)
 import Views.Author exposing(authorSidebar)
 
+buttonBar model =
+  div [id "buttonBar"] [
+     button [onClick GoToEditor] [text "Edit"]
+   , button [onClick GoToNewDocument, class "anotherButton"] [text "New"]
+  ]
+
 reader model =
-    div [] [
-      p [id "info"] [ text model.info]
-      , button [onClick GoToEditor] [text "Edit"]
-      , button [onClick GoToNewDocument, class "anotherButton"] [text "New"]
-      , authorSidebar model
-      , documentViewer model
+    div [id "reader"] [
+      -- p [id "info"] [ text model.info]
+       buttonBar model     
+       , authorSidebar model
+       , documentViewer model
     ]

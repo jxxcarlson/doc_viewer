@@ -9,10 +9,7 @@ import Types exposing(..)
 documentViewer : Model -> Html Msg
 documentViewer model =
   div [id "documentViewer"] [
-     h1 [] [ text "Poetry" ]
-    , br [] []
-    , img [ src model.selectedAuthor.photo_url] []
-    , p [] [a [href model.selectedAuthor.url] [ text ("Poems of " ++ model.selectedAuthor.name)]]
+     h1 [id "poems_of_author"] [a [href model.selectedAuthor.url] [ text ("Poems of " ++ model.selectedAuthor.name)]]
     , ul [] (List.map (viewTitle model.selectedDocument) model.documents)
     , div [id "document"] [viewDocument model.selectedDocument]
   ]

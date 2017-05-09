@@ -11,6 +11,7 @@ authorSidebar : Model -> Html Msg
 authorSidebar model =
   div [id "authors"] [
      h3 [] [text "Authors"]
+     , img [ src model.selectedAuthor.photo_url, id "author_image"] []
      , authorQueryForm model
      , br [] []
      , ul [] (List.map (viewAuthor model.selectedAuthor) model.authors)

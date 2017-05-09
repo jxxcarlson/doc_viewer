@@ -10144,77 +10144,52 @@ var _user$project$Views_Document$documentViewer = function (model) {
 			ctor: '::',
 			_0: A2(
 				_elm_lang$html$Html$h1,
-				{ctor: '[]'},
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text('Poetry'),
+					_0: _elm_lang$html$Html_Attributes$id('poems_of_author'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$a,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$href(model.selectedAuthor.url),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(
+								A2(_elm_lang$core$Basics_ops['++'], 'Poems of ', model.selectedAuthor.name)),
+							_1: {ctor: '[]'}
+						}),
 					_1: {ctor: '[]'}
 				}),
 			_1: {
 				ctor: '::',
 				_0: A2(
-					_elm_lang$html$Html$br,
+					_elm_lang$html$Html$ul,
 					{ctor: '[]'},
-					{ctor: '[]'}),
+					A2(
+						_elm_lang$core$List$map,
+						_user$project$Views_Document$viewTitle(model.selectedDocument),
+						model.documents)),
 				_1: {
 					ctor: '::',
 					_0: A2(
-						_elm_lang$html$Html$img,
+						_elm_lang$html$Html$div,
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$src(model.selectedAuthor.photo_url),
+							_0: _elm_lang$html$Html_Attributes$id('document'),
 							_1: {ctor: '[]'}
 						},
-						{ctor: '[]'}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$p,
-							{ctor: '[]'},
-							{
-								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$a,
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$href(model.selectedAuthor.url),
-										_1: {ctor: '[]'}
-									},
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html$text(
-											A2(_elm_lang$core$Basics_ops['++'], 'Poems of ', model.selectedAuthor.name)),
-										_1: {ctor: '[]'}
-									}),
-								_1: {ctor: '[]'}
-							}),
-						_1: {
+						{
 							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$ul,
-								{ctor: '[]'},
-								A2(
-									_elm_lang$core$List$map,
-									_user$project$Views_Document$viewTitle(model.selectedDocument),
-									model.documents)),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$div,
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$id('document'),
-										_1: {ctor: '[]'}
-									},
-									{
-										ctor: '::',
-										_0: _user$project$Views_Document$viewDocument(model.selectedDocument),
-										_1: {ctor: '[]'}
-									}),
-								_1: {ctor: '[]'}
-							}
-						}
-					}
+							_0: _user$project$Views_Document$viewDocument(model.selectedDocument),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
 				}
 			}
 		});
@@ -10354,23 +10329,38 @@ var _user$project$Views_Author$authorSidebar = function (model) {
 				}),
 			_1: {
 				ctor: '::',
-				_0: _user$project$Views_Form$authorQueryForm(model),
+				_0: A2(
+					_elm_lang$html$Html$img,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$src(model.selectedAuthor.photo_url),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$id('author_image'),
+							_1: {ctor: '[]'}
+						}
+					},
+					{ctor: '[]'}),
 				_1: {
 					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$br,
-						{ctor: '[]'},
-						{ctor: '[]'}),
+					_0: _user$project$Views_Form$authorQueryForm(model),
 					_1: {
 						ctor: '::',
 						_0: A2(
-							_elm_lang$html$Html$ul,
+							_elm_lang$html$Html$br,
 							{ctor: '[]'},
-							A2(
-								_elm_lang$core$List$map,
-								_user$project$Views_Author$viewAuthor(model.selectedAuthor),
-								model.authors)),
-						_1: {ctor: '[]'}
+							{ctor: '[]'}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$ul,
+								{ctor: '[]'},
+								A2(
+									_elm_lang$core$List$map,
+									_user$project$Views_Author$viewAuthor(model.selectedAuthor),
+									model.authors)),
+							_1: {ctor: '[]'}
+						}
 					}
 				}
 			}
@@ -10400,22 +10390,26 @@ var _user$project$Request_Document$getDocuments = function (author_identifier) {
 	return A2(_elm_lang$http$Http$send, _user$project$Types$GetDocuments, request);
 };
 
-var _user$project$Views_Reader$reader = function (model) {
+var _user$project$Views_Reader$buttonBar = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
-		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$id('buttonBar'),
+			_1: {ctor: '[]'}
+		},
 		{
 			ctor: '::',
 			_0: A2(
-				_elm_lang$html$Html$p,
+				_elm_lang$html$Html$button,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$id('info'),
+					_0: _elm_lang$html$Html_Events$onClick(_user$project$Types$GoToEditor),
 					_1: {ctor: '[]'}
 				},
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text(model.info),
+					_0: _elm_lang$html$Html$text('Edit'),
 					_1: {ctor: '[]'}
 				}),
 			_1: {
@@ -10424,50 +10418,53 @@ var _user$project$Views_Reader$reader = function (model) {
 					_elm_lang$html$Html$button,
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Events$onClick(_user$project$Types$GoToEditor),
-						_1: {ctor: '[]'}
+						_0: _elm_lang$html$Html_Events$onClick(_user$project$Types$GoToNewDocument),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('anotherButton'),
+							_1: {ctor: '[]'}
+						}
 					},
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html$text('Edit'),
+						_0: _elm_lang$html$Html$text('New'),
 						_1: {ctor: '[]'}
 					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$Views_Reader$reader = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$id('reader'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _user$project$Views_Reader$buttonBar(model),
+			_1: {
+				ctor: '::',
+				_0: _user$project$Views_Author$authorSidebar(model),
 				_1: {
 					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$button,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onClick(_user$project$Types$GoToNewDocument),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('anotherButton'),
-								_1: {ctor: '[]'}
-							}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('New'),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: _user$project$Views_Author$authorSidebar(model),
-						_1: {
-							ctor: '::',
-							_0: _user$project$Views_Document$documentViewer(model),
-							_1: {ctor: '[]'}
-						}
-					}
+					_0: _user$project$Views_Document$documentViewer(model),
+					_1: {ctor: '[]'}
 				}
 			}
 		});
 };
 
-var _user$project$Views_Editor$editor = function (model) {
+var _user$project$Views_Editor$buttonBar = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
-		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$id('buttonBar'),
+			_1: {ctor: '[]'}
+		},
 		{
 			ctor: '::',
 			_0: A2(
@@ -10500,37 +10497,62 @@ var _user$project$Views_Editor$editor = function (model) {
 						_0: _elm_lang$html$Html$text('New'),
 						_1: {ctor: '[]'}
 					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$h3,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('Editor'),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$Views_Editor$editor = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _user$project$Views_Editor$buttonBar(model),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$id('editor'),
+						_1: {ctor: '[]'}
+					},
+					{
 						ctor: '::',
 						_0: A2(
-							_elm_lang$html$Html$p,
+							_elm_lang$html$Html$h3,
 							{ctor: '[]'},
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text('Under construction ...'),
+								_0: _elm_lang$html$Html$text('Editor'),
 								_1: {ctor: '[]'}
 							}),
-						_1: {ctor: '[]'}
-					}
-				}
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$p,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Under construction ...'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
 			}
 		});
 };
 
-var _user$project$Views_NewDocument$newDocument = function (model) {
+var _user$project$Views_NewDocument$buttonBar = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
-		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$id('buttonBar'),
+			_1: {ctor: '[]'}
+		},
 		{
 			ctor: '::',
 			_0: A2(
@@ -10545,28 +10567,49 @@ var _user$project$Views_NewDocument$newDocument = function (model) {
 					_0: _elm_lang$html$Html$text('Read'),
 					_1: {ctor: '[]'}
 				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Views_NewDocument$newDocument = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _user$project$Views_NewDocument$buttonBar(model),
 			_1: {
 				ctor: '::',
 				_0: A2(
-					_elm_lang$html$Html$h3,
-					{ctor: '[]'},
+					_elm_lang$html$Html$div,
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html$text('New Document'),
+						_0: _elm_lang$html$Html_Attributes$id('newDocument'),
 						_1: {ctor: '[]'}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$p,
-						{ctor: '[]'},
-						{
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$h3,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('New Document'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
 							ctor: '::',
-							_0: _elm_lang$html$Html$text('Under construction ...'),
+							_0: A2(
+								_elm_lang$html$Html$p,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Under construction ...'),
+									_1: {ctor: '[]'}
+								}),
 							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				}
+						}
+					}),
+				_1: {ctor: '[]'}
 			}
 		});
 };
