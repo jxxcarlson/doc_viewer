@@ -10156,7 +10156,11 @@ var _user$project$Views_Document$documentViewer = function (model) {
 						{
 							ctor: '::',
 							_0: _elm_lang$html$Html_Attributes$href(model.selectedAuthor.url),
-							_1: {ctor: '[]'}
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$target('_blank'),
+								_1: {ctor: '[]'}
+							}
 						},
 						{
 							ctor: '::',
@@ -10567,7 +10571,26 @@ var _user$project$Views_NewDocument$buttonBar = function (model) {
 					_0: _elm_lang$html$Html$text('Read'),
 					_1: {ctor: '[]'}
 				}),
-			_1: {ctor: '[]'}
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$button,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onClick(_user$project$Types$GoToEditor),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('anotherButton'),
+							_1: {ctor: '[]'}
+						}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Edit'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
 		});
 };
 var _user$project$Views_NewDocument$newDocument = function (model) {

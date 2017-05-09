@@ -9,6 +9,7 @@ import Html.Events as HE exposing(onClick)
 buttonBar model =
   div [id "buttonBar"] [
      button [onClick GoToReader] [text "Read"]
+     , button [onClick GoToEditor, class "anotherButton"] [text "Edit"]
   ]
 
 newDocument model =
