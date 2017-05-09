@@ -1,7 +1,11 @@
 elm-make doc_viewer.elm  --output elm.js
 
 
-== Heroku
+== Heroku Info
+
+https://elm-docviewer.herokuapp.com/[App deployed here]
+
+== Heroku Deploy references
 
 https://github.com/srid/heroku-buildpack-elm
 https://github.com/srid/elm-todomvc/blob/heroku/app.json
@@ -32,3 +36,6 @@ https://github.com/foxdonut/adventures-reactive-web-dev/tree/master/client-elm
 
 - https://guide.elm-lang.org/[Guide]
 - http://package.elm-lang.org/packages/rtfeldman/elm-css/latest[elm-css]
+
+
+http://package.elm-lang.org/packages/elm-lang/core/5.1.1/Debug#
