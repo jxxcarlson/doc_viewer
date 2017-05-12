@@ -8,7 +8,7 @@ type alias DocumentId = String
 type alias Author = { name : String, identifier: String, url: String, photo_url : String }
 
 type alias Model = {
-     route: Route,
+     page: Page,
      info: String,
      input_text: String,
      author_identifier: String,
@@ -27,13 +27,13 @@ type Msg
     | GetAuthor (Result Http.Error String)
     | GetAuthors (Result Http.Error String)
     | GetAllAuthors
-    | OnLocationChange Navigation.Location
+    -- | OnLocationChange Navigation.Location
     | GoToEditor
     | GoToReader
     | GoToNewDocument
 
-type Route
-   = ReaderRoute
-   | EditorRoute
-   | NewDocumentRoute
-   | NotFoundRoute
+type Page
+   = ReaderPage
+   | EditorPage
+   | NewDocumentPage
+   | NotFoundPage

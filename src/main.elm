@@ -19,21 +19,21 @@ import Data.Author exposing(..)
 import Data.Document exposing(..)
 import Data.Init exposing(initialModel, document0)
 
-import Routing exposing(parseLocation)
+-- import Routing exposing(parseLocation)
 
 view : Model -> Html Msg
 view model =
   div [] [ page model ]
 
 page model =
-  case model.route of
-    ReaderRoute ->
+  case model.page of
+    ReaderPage ->
       reader model
-    EditorRoute ->
+    EditorPage ->
       editor model
-    NewDocumentRoute ->
+    NewDocumentPage ->
       newDocument model
-    NotFoundRoute ->
+    NotFoundPage ->
       notFound model
 
 notFound model =
@@ -77,7 +77,7 @@ update msg model =
 
       GetAuthor (Ok serverReply) ->
         case (author serverReply) of
-          (Ok authorRecord) -> ( {model | selectedAuthor =  authorRecord }, 
+          (Ok authorRecord) -> ( {model | selectedAuthor =  authorRecord },
              getDocuments authorRecord.identifier)
           (Err _) -> ( {model | info = "Could not decode server reply"}, Cmd.none)
       GetAuthor (Err _) ->
@@ -95,17 +95,17 @@ update msg model =
 
 
       GoToEditor ->
-        ( {model | route = EditorRoute }, Cmd.none )
+        ( {model | page = EditorPage }, Cmd.none )
       GoToReader ->
-        ( {model | route = ReaderRoute }, Cmd.none )
+        ( {model | page = ReaderPage }, Cmd.none )
       GoToNewDocument ->
-        ( {model | route = NewDocumentRoute }, Cmd.none )
-      OnLocationChange location ->
-        let
-          newRoute =
-            parseLocation location
-        in
-          ( { model | route = newRoute, info = "location change" }, Cmd.none )
+        ( {model | page = NewDocumentPage }, Cmd.none )
+      -- OnLocationChange location ->
+      --   let
+      --     newRoute =
+      --       parseLocation location
+      --   in
+      --     ( { model | route = newRoute, info = "location change" }, Cmd.none )
 
 main : Program Never Model Msg
 main =

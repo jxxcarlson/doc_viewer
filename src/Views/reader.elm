@@ -18,7 +18,7 @@ buttonBar model =
 reader model =
     div [id "reader"] [
       -- p [id "info"] [ text model.info]
-       buttonBar model     
+       buttonBar model
        , authorSidebar model
        , documentViewer model
     ]

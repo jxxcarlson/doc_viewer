@@ -46,7 +46,7 @@ All mimsy were the borogoves,
 
 initialModel : Model
 initialModel = {
-     route = ReaderRoute
+     page = ReaderPage
      , info = "No messages"
      , input_text = "Carroll"
      , author_identifier = "Carroll"
