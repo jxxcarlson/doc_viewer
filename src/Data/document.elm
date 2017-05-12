@@ -5,6 +5,13 @@ import Json.Decode.Pipeline as JPipeline exposing (decode, required, optional, h
 
 import Types exposing(..)
 
+type alias DocumentListRecord = { documents: List Document }
+
+-- documentsRecordDecoder : String -> Result String (List Document)
+-- documentsRecordDecoder author_identifier =
+--   decode DocumentListRecord
+--     |> Pipeline.required "document"
+--     |> Json.Decode.decodeString documentsDecoder author_identifier
 
 documentsRequestDecoder : String -> Result String (List Document)
 documentsRequestDecoder author_identifier =
