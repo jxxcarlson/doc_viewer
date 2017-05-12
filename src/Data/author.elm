@@ -1,20 +1,13 @@
 module Data.Author exposing(..)
 
-import Json.Decode exposing (int, list, string, float, Decoder)
+import Json.Decode exposing (at, int, list, string, decodeString, Decoder)
 import Json.Decode.Pipeline as JPipeline exposing (decode, required, optional, hardcoded)
 
 import Types exposing(..)
 
-authorRequestDecoder : String -> Result String (Author)
-authorRequestDecoder author_identifier =
-  Json.Decode.decodeString authorDecoder author_identifier
+type alias Authors = { authors: List Author }
+type alias AuthorRecord = { author: Author }
 
-authorsRequestDecoder : String -> Result String (List Author)
-authorsRequestDecoder author_identifier =
-  Json.Decode.decodeString authorsDecoder author_identifier
-
-authorsDecoder : Decoder (List Author)
-authorsDecoder = Json.Decode.list authorDecoder
 
 authorDecoder : Decoder Author
 authorDecoder =
@@ -23,3 +16,20 @@ authorDecoder =
     |> JPipeline.required "identifier" string
     |> JPipeline.required "url" string
     |> JPipeline.required "photo_url" string
+
+authorsDecoder : Decoder Authors
+authorsDecoder =
+  decode
+    Authors
+    |> required "authors" (list authorDecoder)
+
+author : String -> Result String Author
+author jsonString =
+  decodeString authorDecoder jsonString
+
+authors : String -> Result String Authors
+authors jsonString =
+  decodeString authorsDecoder jsonString
+
+
+-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

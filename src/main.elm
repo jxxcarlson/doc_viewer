@@ -63,31 +63,37 @@ update msg model =
           ( model, Cmd.none )
 
       GetDocuments (Ok serverReply) ->
-        case (documentsRequestDecoder serverReply) of
-          (Ok documents) ->
-            let selectedDocument = case List.head documents of
+        case (documents serverReply) of
+          (Ok documentsRecord) ->
+            let selectedDocument = case List.head documentsRecord.documents of
               (Just document) -> document
               (Nothing) -> document0
             in
-               ( {model | documents =  documents, selectedDocument = selectedDocument, info = "Documents: HTTP request OK"}, Cmd.none)
+               ( {model | documents =  documentsRecord.documents, selectedDocument = selectedDocument, info = "Documents: HTTP request OK"}, Cmd.none)
           (Err _) -> ( {model | info = "Could not decode server reply"}, Cmd.none)
       GetDocuments (Err _) ->
         ( {model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )
 
+
       GetAuthor (Ok serverReply) ->
-        case (authorRequestDecoder serverReply) of
-          (Ok author) -> ( {model | selectedAuthor =  author, info = "A.I: " ++ author.identifier}, getDocuments author.identifier)
+        case (author serverReply) of
+          (Ok authorRecord) -> ( {model | selectedAuthor =  authorRecord }, 
+             getDocuments authorRecord.identifier)
           (Err _) -> ( {model | info = "Could not decode server reply"}, Cmd.none)
       GetAuthor (Err _) ->
         ( {model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )
+
+
       GetAuthors (Ok serverReply) ->
-        case (authorsRequestDecoder serverReply) of
-          (Ok authors) -> ( {model | authors =  authors, info = "Author list loaded"}, Cmd.none)
+        case (authors serverReply) of
+          (Ok authorsRecord) -> ( {model | authors =  authorsRecord.authors, info = "Author list loaded"}, Cmd.none)
           (Err _) -> ( {model | info = "Could not decode server reply"}, Cmd.none)
       GetAuthors (Err _) ->
         ( {model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )-- MAIN
       GetAllAuthors ->
         ( {model | input_text = "all" } , getAuthors "all" )
+
+
       GoToEditor ->
         ( {model | route = EditorRoute }, Cmd.none )
       GoToReader ->

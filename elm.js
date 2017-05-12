@@ -10018,12 +10018,22 @@ var _user$project$Data_Author$authorDecoder = A3(
 				'name',
 				_elm_lang$core$Json_Decode$string,
 				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Types$Author)))));
-var _user$project$Data_Author$authorsDecoder = _elm_lang$core$Json_Decode$list(_user$project$Data_Author$authorDecoder);
-var _user$project$Data_Author$authorsRequestDecoder = function (author_identifier) {
-	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Data_Author$authorsDecoder, author_identifier);
+var _user$project$Data_Author$author = function (jsonString) {
+	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Data_Author$authorDecoder, jsonString);
 };
-var _user$project$Data_Author$authorRequestDecoder = function (author_identifier) {
-	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Data_Author$authorDecoder, author_identifier);
+var _user$project$Data_Author$Authors = function (a) {
+	return {authors: a};
+};
+var _user$project$Data_Author$authorsDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'authors',
+	_elm_lang$core$Json_Decode$list(_user$project$Data_Author$authorDecoder),
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Data_Author$Authors));
+var _user$project$Data_Author$authors = function (jsonString) {
+	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Data_Author$authorsDecoder, jsonString);
+};
+var _user$project$Data_Author$AuthorRecord = function (a) {
+	return {author: a};
 };
 
 var _user$project$Data_Document$documentDecoder = A3(
@@ -10039,12 +10049,19 @@ var _user$project$Data_Document$documentDecoder = A3(
 			'title',
 			_elm_lang$core$Json_Decode$string,
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Types$Document))));
-var _user$project$Data_Document$documentsDecoder = _elm_lang$core$Json_Decode$list(_user$project$Data_Document$documentDecoder);
-var _user$project$Data_Document$documentsRequestDecoder = function (author_identifier) {
-	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Data_Document$documentsDecoder, author_identifier);
+var _user$project$Data_Document$document = function (jsonString) {
+	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Data_Document$documentDecoder, jsonString);
 };
-var _user$project$Data_Document$DocumentListRecord = function (a) {
+var _user$project$Data_Document$Documents = function (a) {
 	return {documents: a};
+};
+var _user$project$Data_Document$documentsDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'documents',
+	_elm_lang$core$Json_Decode$list(_user$project$Data_Document$documentDecoder),
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Data_Document$Documents));
+var _user$project$Data_Document$documents = function (jsonString) {
+	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Data_Document$documentsDecoder, jsonString);
 };
 
 var _user$project$Data_Init$document1 = {title: 'Jabberwocky', author: 'Lewis Carroll', text: '‘Twas brillig, and the slithy toves\n   Did gyre and gimble in the wabe;\nAll mimsy were the borogoves,\n   And the mome raths outgrabe.\n\n“Beware the Jabberwock, my son\n   The jaws that bite, the claws that catch!\nBeware the Jubjub bird, and shun\n   The frumious Bandersnatch!”\n\nHe took his vorpal sword in hand;\n   Long time the manxome foe he sought—\nSo rested he by the Tumtum tree,\n   And stood awhile in thought.\n\nAnd, as in uffish thought he stood,\n   The Jabberwock, with eyes of flame,\nCame whiffling through the tulgey wood,\n   And burbled as it came!\n\nOne, two! One, two! And through and through\n   The vorpal blade went snicker-snack!\nHe left it dead, and with its head\n   He went galumphing back.\n\n“And hast thou slain the Jabberwock?\n   Come to my arms, my beamish boy!\nO frabjous day! Callooh! Callay!”\n   He chortled in his joy.\n\n‘Twas brillig, and the slithy toves\n   Did gyre and gimble in the wabe;\nAll mimsy were the borogoves,\n   And the mome raths outgrabe.\n'};
@@ -10707,11 +10724,11 @@ var _user$project$Main$update = F2(
 				} : {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'GetDocuments':
 				if (_p0._0.ctor === 'Ok') {
-					var _p2 = _user$project$Data_Document$documentsRequestDecoder(_p0._0._0);
+					var _p2 = _user$project$Data_Document$documents(_p0._0._0);
 					if (_p2.ctor === 'Ok') {
 						var _p4 = _p2._0;
 						var selectedDocument = function () {
-							var _p3 = _elm_lang$core$List$head(_p4);
+							var _p3 = _elm_lang$core$List$head(_p4.documents);
 							if (_p3.ctor === 'Just') {
 								return _p3._0;
 							} else {
@@ -10722,7 +10739,7 @@ var _user$project$Main$update = F2(
 							ctor: '_Tuple2',
 							_0: _elm_lang$core$Native_Utils.update(
 								model,
-								{documents: _p4, selectedDocument: selectedDocument, info: 'Documents: HTTP request OK'}),
+								{documents: _p4.documents, selectedDocument: selectedDocument, info: 'Documents: HTTP request OK'}),
 							_1: _elm_lang$core$Platform_Cmd$none
 						};
 					} else {
@@ -10750,17 +10767,14 @@ var _user$project$Main$update = F2(
 				}
 			case 'GetAuthor':
 				if (_p0._0.ctor === 'Ok') {
-					var _p5 = _user$project$Data_Author$authorRequestDecoder(_p0._0._0);
+					var _p5 = _user$project$Data_Author$author(_p0._0._0);
 					if (_p5.ctor === 'Ok') {
 						var _p6 = _p5._0;
 						return {
 							ctor: '_Tuple2',
 							_0: _elm_lang$core$Native_Utils.update(
 								model,
-								{
-									selectedAuthor: _p6,
-									info: A2(_elm_lang$core$Basics_ops['++'], 'A.I: ', _p6.identifier)
-								}),
+								{selectedAuthor: _p6}),
 							_1: _user$project$Request_Document$getDocuments(_p6.identifier)
 						};
 					} else {
@@ -10788,13 +10802,13 @@ var _user$project$Main$update = F2(
 				}
 			case 'GetAuthors':
 				if (_p0._0.ctor === 'Ok') {
-					var _p7 = _user$project$Data_Author$authorsRequestDecoder(_p0._0._0);
+					var _p7 = _user$project$Data_Author$authors(_p0._0._0);
 					if (_p7.ctor === 'Ok') {
 						return {
 							ctor: '_Tuple2',
 							_0: _elm_lang$core$Native_Utils.update(
 								model,
-								{authors: _p7._0, info: 'Author list loaded'}),
+								{authors: _p7._0.authors, info: 'Author list loaded'}),
 							_1: _elm_lang$core$Platform_Cmd$none
 						};
 					} else {
