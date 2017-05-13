@@ -9705,6 +9705,566 @@ var _elm_lang$navigation$Navigation$onEffects = F4(
 	});
 _elm_lang$core$Native_Platform.effectManagers['Navigation'] = {pkg: 'elm-lang/navigation', init: _elm_lang$navigation$Navigation$init, onEffects: _elm_lang$navigation$Navigation$onEffects, onSelfMsg: _elm_lang$navigation$Navigation$onSelfMsg, tag: 'fx', cmdMap: _elm_lang$navigation$Navigation$cmdMap, subMap: _elm_lang$navigation$Navigation$subMap};
 
+var _truqu$elm_base64$BitList$partition = F2(
+	function (size, list) {
+		if (_elm_lang$core$Native_Utils.cmp(
+			_elm_lang$core$List$length(list),
+			size) < 1) {
+			return {
+				ctor: '::',
+				_0: list,
+				_1: {ctor: '[]'}
+			};
+		} else {
+			var partitionTail = F3(
+				function (size, list, res) {
+					partitionTail:
+					while (true) {
+						var _p0 = list;
+						if (_p0.ctor === '[]') {
+							return res;
+						} else {
+							var _v1 = size,
+								_v2 = A2(_elm_lang$core$List$drop, size, list),
+								_v3 = {
+								ctor: '::',
+								_0: A2(_elm_lang$core$List$take, size, list),
+								_1: res
+							};
+							size = _v1;
+							list = _v2;
+							res = _v3;
+							continue partitionTail;
+						}
+					}
+				});
+			return _elm_lang$core$List$reverse(
+				A3(
+					partitionTail,
+					size,
+					list,
+					{ctor: '[]'}));
+		}
+	});
+var _truqu$elm_base64$BitList$toByteReverse = function (bitList) {
+	var _p1 = bitList;
+	if (_p1.ctor === '[]') {
+		return 0;
+	} else {
+		if (_p1._0.ctor === 'Off') {
+			return 2 * _truqu$elm_base64$BitList$toByteReverse(_p1._1);
+		} else {
+			return 1 + (2 * _truqu$elm_base64$BitList$toByteReverse(_p1._1));
+		}
+	}
+};
+var _truqu$elm_base64$BitList$toByte = function (bitList) {
+	return _truqu$elm_base64$BitList$toByteReverse(
+		_elm_lang$core$List$reverse(bitList));
+};
+var _truqu$elm_base64$BitList$Off = {ctor: 'Off'};
+var _truqu$elm_base64$BitList$On = {ctor: 'On'};
+var _truqu$elm_base64$BitList$fromNumber = function ($int) {
+	return _elm_lang$core$Native_Utils.eq($int, 0) ? {ctor: '[]'} : (_elm_lang$core$Native_Utils.eq(
+		A2(_elm_lang$core$Basics_ops['%'], $int, 2),
+		1) ? A2(
+		_elm_lang$core$List$append,
+		_truqu$elm_base64$BitList$fromNumber(($int / 2) | 0),
+		{
+			ctor: '::',
+			_0: _truqu$elm_base64$BitList$On,
+			_1: {ctor: '[]'}
+		}) : A2(
+		_elm_lang$core$List$append,
+		_truqu$elm_base64$BitList$fromNumber(($int / 2) | 0),
+		{
+			ctor: '::',
+			_0: _truqu$elm_base64$BitList$Off,
+			_1: {ctor: '[]'}
+		}));
+};
+var _truqu$elm_base64$BitList$fromNumberWithSize = F2(
+	function (number, size) {
+		var bitList = _truqu$elm_base64$BitList$fromNumber(number);
+		var paddingSize = size - _elm_lang$core$List$length(bitList);
+		return A2(
+			_elm_lang$core$List$append,
+			A2(_elm_lang$core$List$repeat, paddingSize, _truqu$elm_base64$BitList$Off),
+			bitList);
+	});
+var _truqu$elm_base64$BitList$fromByte = function ($byte) {
+	return A2(_truqu$elm_base64$BitList$fromNumberWithSize, $byte, 8);
+};
+
+var _truqu$elm_base64$Base64$dropLast = F2(
+	function (number, list) {
+		return _elm_lang$core$List$reverse(
+			A2(
+				_elm_lang$core$List$drop,
+				number,
+				_elm_lang$core$List$reverse(list)));
+	});
+var _truqu$elm_base64$Base64$partitionBits = function (list) {
+	var list_ = A3(
+		_elm_lang$core$List$foldr,
+		_elm_lang$core$List$append,
+		{ctor: '[]'},
+		A2(_elm_lang$core$List$map, _truqu$elm_base64$BitList$fromByte, list));
+	return A2(
+		_elm_lang$core$List$map,
+		_truqu$elm_base64$BitList$toByte,
+		A2(_truqu$elm_base64$BitList$partition, 6, list_));
+};
+var _truqu$elm_base64$Base64$base64CharsList = _elm_lang$core$String$toList('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/');
+var _truqu$elm_base64$Base64$base64Map = function () {
+	var insert = F2(
+		function (_p0, dict) {
+			var _p1 = _p0;
+			return A3(_elm_lang$core$Dict$insert, _p1._1, _p1._0, dict);
+		});
+	return A3(
+		_elm_lang$core$List$foldl,
+		insert,
+		_elm_lang$core$Dict$empty,
+		A2(
+			_elm_lang$core$List$indexedMap,
+			F2(
+				function (v0, v1) {
+					return {ctor: '_Tuple2', _0: v0, _1: v1};
+				}),
+			_truqu$elm_base64$Base64$base64CharsList));
+}();
+var _truqu$elm_base64$Base64$isValid = function (string) {
+	var string_ = A2(_elm_lang$core$String$endsWith, '==', string) ? A2(_elm_lang$core$String$dropRight, 2, string) : (A2(_elm_lang$core$String$endsWith, '=', string) ? A2(_elm_lang$core$String$dropRight, 1, string) : string);
+	var isBase64Char = function ($char) {
+		return A2(_elm_lang$core$Dict$member, $char, _truqu$elm_base64$Base64$base64Map);
+	};
+	return A2(_elm_lang$core$String$all, isBase64Char, string_);
+};
+var _truqu$elm_base64$Base64$toBase64BitList = function (string) {
+	var endingEquals = A2(_elm_lang$core$String$endsWith, '==', string) ? 2 : (A2(_elm_lang$core$String$endsWith, '=', string) ? 1 : 0);
+	var stripped = _elm_lang$core$String$toList(
+		A2(_elm_lang$core$String$dropRight, endingEquals, string));
+	var base64ToInt = function ($char) {
+		var _p2 = A2(_elm_lang$core$Dict$get, $char, _truqu$elm_base64$Base64$base64Map);
+		if (_p2.ctor === 'Just') {
+			return _p2._0;
+		} else {
+			return -1;
+		}
+	};
+	var numberList = A2(_elm_lang$core$List$map, base64ToInt, stripped);
+	return A2(
+		_truqu$elm_base64$Base64$dropLast,
+		endingEquals * 2,
+		A2(
+			_elm_lang$core$List$concatMap,
+			A2(_elm_lang$core$Basics$flip, _truqu$elm_base64$BitList$fromNumberWithSize, 6),
+			numberList));
+};
+var _truqu$elm_base64$Base64$toCharList = function (bitList) {
+	var array = _elm_lang$core$Array$fromList(_truqu$elm_base64$Base64$base64CharsList);
+	var toBase64Char = function (index) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			_elm_lang$core$Native_Utils.chr('!'),
+			A2(_elm_lang$core$Array$get, index, array));
+	};
+	var toChars = function (_p3) {
+		var _p4 = _p3;
+		var _p5 = {ctor: '_Tuple3', _0: _p4._0, _1: _p4._1, _2: _p4._2};
+		if (_p5._2 === -1) {
+			if (_p5._1 === -1) {
+				return A2(
+					_elm_lang$core$List$append,
+					A2(
+						_truqu$elm_base64$Base64$dropLast,
+						2,
+						A2(
+							_elm_lang$core$List$map,
+							toBase64Char,
+							_truqu$elm_base64$Base64$partitionBits(
+								{
+									ctor: '::',
+									_0: _p5._0,
+									_1: {
+										ctor: '::',
+										_0: 0,
+										_1: {
+											ctor: '::',
+											_0: 0,
+											_1: {ctor: '[]'}
+										}
+									}
+								}))),
+					{
+						ctor: '::',
+						_0: _elm_lang$core$Native_Utils.chr('='),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$core$Native_Utils.chr('='),
+							_1: {ctor: '[]'}
+						}
+					});
+			} else {
+				return A2(
+					_elm_lang$core$List$append,
+					A2(
+						_truqu$elm_base64$Base64$dropLast,
+						1,
+						A2(
+							_elm_lang$core$List$map,
+							toBase64Char,
+							_truqu$elm_base64$Base64$partitionBits(
+								{
+									ctor: '::',
+									_0: _p5._0,
+									_1: {
+										ctor: '::',
+										_0: _p5._1,
+										_1: {
+											ctor: '::',
+											_0: 0,
+											_1: {ctor: '[]'}
+										}
+									}
+								}))),
+					{
+						ctor: '::',
+						_0: _elm_lang$core$Native_Utils.chr('='),
+						_1: {ctor: '[]'}
+					});
+			}
+		} else {
+			return A2(
+				_elm_lang$core$List$map,
+				toBase64Char,
+				_truqu$elm_base64$Base64$partitionBits(
+					{
+						ctor: '::',
+						_0: _p5._0,
+						_1: {
+							ctor: '::',
+							_0: _p5._1,
+							_1: {
+								ctor: '::',
+								_0: _p5._2,
+								_1: {ctor: '[]'}
+							}
+						}
+					}));
+		}
+	};
+	return A2(_elm_lang$core$List$concatMap, toChars, bitList);
+};
+var _truqu$elm_base64$Base64$toTupleList = function (list) {
+	var _p6 = list;
+	if (_p6.ctor === '::') {
+		if (_p6._1.ctor === '::') {
+			if (_p6._1._1.ctor === '::') {
+				return {
+					ctor: '::',
+					_0: {ctor: '_Tuple3', _0: _p6._0, _1: _p6._1._0, _2: _p6._1._1._0},
+					_1: _truqu$elm_base64$Base64$toTupleList(_p6._1._1._1)
+				};
+			} else {
+				return {
+					ctor: '::',
+					_0: {ctor: '_Tuple3', _0: _p6._0, _1: _p6._1._0, _2: -1},
+					_1: {ctor: '[]'}
+				};
+			}
+		} else {
+			return {
+				ctor: '::',
+				_0: {ctor: '_Tuple3', _0: _p6._0, _1: -1, _2: -1},
+				_1: {ctor: '[]'}
+			};
+		}
+	} else {
+		return {ctor: '[]'};
+	}
+};
+var _truqu$elm_base64$Base64$toCodeList = function (string) {
+	return A2(
+		_elm_lang$core$List$map,
+		_elm_lang$core$Char$toCode,
+		_elm_lang$core$String$toList(string));
+};
+var _truqu$elm_base64$Base64$decode = function (s) {
+	if (!_truqu$elm_base64$Base64$isValid(s)) {
+		return _elm_lang$core$Result$Err('Error while decoding');
+	} else {
+		var bitList = A2(
+			_elm_lang$core$List$map,
+			_truqu$elm_base64$BitList$toByte,
+			A2(
+				_truqu$elm_base64$BitList$partition,
+				8,
+				_truqu$elm_base64$Base64$toBase64BitList(s)));
+		var charList = A2(_elm_lang$core$List$map, _elm_lang$core$Char$fromCode, bitList);
+		return _elm_lang$core$Result$Ok(
+			_elm_lang$core$String$fromList(charList));
+	}
+};
+var _truqu$elm_base64$Base64$encode = function (s) {
+	return _elm_lang$core$Result$Ok(
+		_elm_lang$core$String$fromList(
+			_truqu$elm_base64$Base64$toCharList(
+				_truqu$elm_base64$Base64$toTupleList(
+					_truqu$elm_base64$Base64$toCodeList(s)))));
+};
+
+var _simonh1000$elm_jwt$Jwt$authenticate = F3(
+	function (url, dec, credentials) {
+		return A3(
+			_elm_lang$http$Http$post,
+			url,
+			_elm_lang$http$Http$jsonBody(credentials),
+			dec);
+	});
+var _simonh1000$elm_jwt$Jwt$createRequestObject = F5(
+	function (method, token, url, body, dec) {
+		return {
+			method: method,
+			headers: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$http$Http$header,
+					'Authorization',
+					A2(_elm_lang$core$Basics_ops['++'], 'Bearer ', token)),
+				_1: {ctor: '[]'}
+			},
+			url: url,
+			body: body,
+			expect: _elm_lang$http$Http$expectJson(dec),
+			timeout: _elm_lang$core$Maybe$Nothing,
+			withCredentials: true
+		};
+	});
+var _simonh1000$elm_jwt$Jwt$createRequest = F4(
+	function (method, token, url, body) {
+		return function (_p0) {
+			return _elm_lang$http$Http$request(
+				A5(_simonh1000$elm_jwt$Jwt$createRequestObject, method, token, url, body, _p0));
+		};
+	});
+var _simonh1000$elm_jwt$Jwt$get = F3(
+	function (token, url, dec) {
+		return A5(_simonh1000$elm_jwt$Jwt$createRequest, 'GET', token, url, _elm_lang$http$Http$emptyBody, dec);
+	});
+var _simonh1000$elm_jwt$Jwt$post = _simonh1000$elm_jwt$Jwt$createRequest('POST');
+var _simonh1000$elm_jwt$Jwt$put = _simonh1000$elm_jwt$Jwt$createRequest('PUT');
+var _simonh1000$elm_jwt$Jwt$delete = F3(
+	function (token, url, dec) {
+		return A5(_simonh1000$elm_jwt$Jwt$createRequest, 'DELETE', token, url, _elm_lang$http$Http$emptyBody, dec);
+	});
+var _simonh1000$elm_jwt$Jwt$unurl = function () {
+	var fix = function (c) {
+		var _p1 = c;
+		switch (_p1.valueOf()) {
+			case '-':
+				return _elm_lang$core$Native_Utils.chr('+');
+			case '_':
+				return _elm_lang$core$Native_Utils.chr('/');
+			default:
+				return _p1;
+		}
+	};
+	return _elm_lang$core$String$map(fix);
+}();
+var _simonh1000$elm_jwt$Jwt$TokenDecodeError = function (a) {
+	return {ctor: 'TokenDecodeError', _0: a};
+};
+var _simonh1000$elm_jwt$Jwt$TokenProcessingError = function (a) {
+	return {ctor: 'TokenProcessingError', _0: a};
+};
+var _simonh1000$elm_jwt$Jwt$fixlength = function (s) {
+	var _p2 = A2(
+		_elm_lang$core$Basics_ops['%'],
+		_elm_lang$core$String$length(s),
+		4);
+	switch (_p2) {
+		case 0:
+			return _elm_lang$core$Result$Ok(s);
+		case 2:
+			return _elm_lang$core$Result$Ok(
+				_elm_lang$core$String$concat(
+					{
+						ctor: '::',
+						_0: s,
+						_1: {
+							ctor: '::',
+							_0: '==',
+							_1: {ctor: '[]'}
+						}
+					}));
+		case 3:
+			return _elm_lang$core$Result$Ok(
+				_elm_lang$core$String$concat(
+					{
+						ctor: '::',
+						_0: s,
+						_1: {
+							ctor: '::',
+							_0: '=',
+							_1: {ctor: '[]'}
+						}
+					}));
+		default:
+			return _elm_lang$core$Result$Err(
+				_simonh1000$elm_jwt$Jwt$TokenProcessingError('Wrong length'));
+	}
+};
+var _simonh1000$elm_jwt$Jwt$getTokenBody = function (token) {
+	var processor = function (_p3) {
+		return A2(
+			_elm_lang$core$List$map,
+			_simonh1000$elm_jwt$Jwt$fixlength,
+			A2(
+				_elm_lang$core$String$split,
+				'.',
+				_simonh1000$elm_jwt$Jwt$unurl(_p3)));
+	};
+	var _p4 = A2(
+		_elm_lang$core$Debug$log,
+		'',
+		processor(token));
+	_v2_2:
+	do {
+		if ((_p4.ctor === '::') && (_p4._1.ctor === '::')) {
+			if (_p4._1._0.ctor === 'Err') {
+				if ((_p4._1._1.ctor === '::') && (_p4._1._1._1.ctor === '[]')) {
+					return _elm_lang$core$Result$Err(_p4._1._0._0);
+				} else {
+					break _v2_2;
+				}
+			} else {
+				if ((_p4._1._1.ctor === '::') && (_p4._1._1._1.ctor === '[]')) {
+					return _elm_lang$core$Result$Ok(_p4._1._0._0);
+				} else {
+					break _v2_2;
+				}
+			}
+		} else {
+			break _v2_2;
+		}
+	} while(false);
+	return _elm_lang$core$Result$Err(
+		_simonh1000$elm_jwt$Jwt$TokenProcessingError('Token has invalid shape'));
+};
+var _simonh1000$elm_jwt$Jwt$decodeToken = function (dec) {
+	return function (_p5) {
+		return A2(
+			_elm_lang$core$Result$andThen,
+			function (_p6) {
+				return A2(
+					_elm_lang$core$Result$mapError,
+					_simonh1000$elm_jwt$Jwt$TokenDecodeError,
+					A2(_elm_lang$core$Json_Decode$decodeString, dec, _p6));
+			},
+			A2(
+				_elm_lang$core$Result$andThen,
+				function (_p7) {
+					return A2(
+						_elm_lang$core$Result$mapError,
+						_simonh1000$elm_jwt$Jwt$TokenDecodeError,
+						_truqu$elm_base64$Base64$decode(_p7));
+				},
+				_simonh1000$elm_jwt$Jwt$getTokenBody(_p5)));
+	};
+};
+var _simonh1000$elm_jwt$Jwt$isExpired = F2(
+	function (now, token) {
+		return A2(
+			_elm_lang$core$Result$map,
+			function (exp) {
+				return _elm_lang$core$Native_Utils.cmp(now, exp * 1000) > 0;
+			},
+			A2(
+				_simonh1000$elm_jwt$Jwt$decodeToken,
+				A2(_elm_lang$core$Json_Decode$field, 'exp', _elm_lang$core$Json_Decode$float),
+				token));
+	});
+var _simonh1000$elm_jwt$Jwt$TokenNotExpired = {ctor: 'TokenNotExpired'};
+var _simonh1000$elm_jwt$Jwt$TokenExpired = {ctor: 'TokenExpired'};
+var _simonh1000$elm_jwt$Jwt$checkUnacceptedToken = F2(
+	function (token, now) {
+		var _p8 = A2(_simonh1000$elm_jwt$Jwt$isExpired, now, token);
+		if (_p8.ctor === 'Ok') {
+			if (_p8._0 === true) {
+				return _simonh1000$elm_jwt$Jwt$TokenExpired;
+			} else {
+				return _simonh1000$elm_jwt$Jwt$TokenNotExpired;
+			}
+		} else {
+			return _p8._0;
+		}
+	});
+var _simonh1000$elm_jwt$Jwt$checkTokenExpiry = function (token) {
+	return A2(
+		_elm_lang$core$Task$andThen,
+		function (_p9) {
+			return _elm_lang$core$Task$succeed(
+				A2(_simonh1000$elm_jwt$Jwt$checkUnacceptedToken, token, _p9));
+		},
+		_elm_lang$core$Time$now);
+};
+var _simonh1000$elm_jwt$Jwt$Unauthorized = {ctor: 'Unauthorized'};
+var _simonh1000$elm_jwt$Jwt$HttpError = function (a) {
+	return {ctor: 'HttpError', _0: a};
+};
+var _simonh1000$elm_jwt$Jwt$promote401 = function (err) {
+	var _p10 = err;
+	if (_p10.ctor === 'BadStatus') {
+		return _elm_lang$core$Native_Utils.eq(_p10._0.status.code, 401) ? _simonh1000$elm_jwt$Jwt$Unauthorized : _simonh1000$elm_jwt$Jwt$HttpError(err);
+	} else {
+		return _simonh1000$elm_jwt$Jwt$HttpError(err);
+	}
+};
+var _simonh1000$elm_jwt$Jwt$send = F2(
+	function (msgCreator, req) {
+		var conv = function (fn) {
+			return function (_p11) {
+				return fn(
+					A2(_elm_lang$core$Result$mapError, _simonh1000$elm_jwt$Jwt$promote401, _p11));
+			};
+		};
+		return A2(
+			_elm_lang$http$Http$send,
+			conv(msgCreator),
+			req);
+	});
+var _simonh1000$elm_jwt$Jwt$handleError = F2(
+	function (token, err) {
+		var _p12 = _simonh1000$elm_jwt$Jwt$promote401(
+			A2(_elm_lang$core$Debug$log, '', err));
+		if (_p12.ctor === 'Unauthorized') {
+			return _simonh1000$elm_jwt$Jwt$checkTokenExpiry(token);
+		} else {
+			return _elm_lang$core$Task$succeed(
+				_simonh1000$elm_jwt$Jwt$HttpError(err));
+		}
+	});
+var _simonh1000$elm_jwt$Jwt$sendCheckExpired = F3(
+	function (token, msgCreator, request) {
+		return A2(
+			_elm_lang$core$Task$perform,
+			msgCreator,
+			A2(
+				_elm_lang$core$Task$onError,
+				function (_p13) {
+					return A2(
+						_elm_lang$core$Task$map,
+						_elm_lang$core$Result$Err,
+						A2(_simonh1000$elm_jwt$Jwt$handleError, token, _p13));
+				},
+				A2(
+					_elm_lang$core$Task$map,
+					_elm_lang$core$Result$Ok,
+					_elm_lang$http$Http$toTask(request))));
+	});
+
 var _user$project$Types$Document = F3(
 	function (a, b, c) {
 		return {title: a, author: b, text: c};
@@ -9713,10 +10273,44 @@ var _user$project$Types$Author = F4(
 	function (a, b, c, d) {
 		return {name: a, identifier: b, url: c, photo_url: d};
 	});
-var _user$project$Types$Model = F8(
-	function (a, b, c, d, e, f, g, h) {
-		return {page: a, info: b, input_text: c, author_identifier: d, selectedAuthor: e, authors: f, documents: g, selectedDocument: h};
-	});
+var _user$project$Types$Model = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return function (k) {
+											return function (l) {
+												return function (m) {
+													return {page: a, info: b, errorMsg: c, user_email: d, user_password: e, username: f, user_token: g, input_text: h, author_identifier: i, selectedAuthor: j, authors: k, documents: l, selectedDocument: m};
+												};
+											};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
+var _user$project$Types$GetTokenCompleted = function (a) {
+	return {ctor: 'GetTokenCompleted', _0: a};
+};
+var _user$project$Types$Login = {ctor: 'Login'};
+var _user$project$Types$Password = function (a) {
+	return {ctor: 'Password', _0: a};
+};
+var _user$project$Types$Email = function (a) {
+	return {ctor: 'Email', _0: a};
+};
+var _user$project$Types$GoToLogin = {ctor: 'GoToLogin'};
 var _user$project$Types$GoToNewDocument = {ctor: 'GoToNewDocument'};
 var _user$project$Types$GoToReader = {ctor: 'GoToReader'};
 var _user$project$Types$GoToEditor = {ctor: 'GoToEditor'};
@@ -9743,9 +10337,84 @@ var _user$project$Types$SelectDocument = function (a) {
 	return {ctor: 'SelectDocument', _0: a};
 };
 var _user$project$Types$NotFoundPage = {ctor: 'NotFoundPage'};
+var _user$project$Types$LoginPage = {ctor: 'LoginPage'};
 var _user$project$Types$NewDocumentPage = {ctor: 'NewDocumentPage'};
 var _user$project$Types$EditorPage = {ctor: 'EditorPage'};
 var _user$project$Types$ReaderPage = {ctor: 'ReaderPage'};
+
+var _user$project$Data_Document$documentDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'text',
+	_elm_lang$core$Json_Decode$string,
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'author',
+		_elm_lang$core$Json_Decode$string,
+		A3(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+			'title',
+			_elm_lang$core$Json_Decode$string,
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Types$Document))));
+var _user$project$Data_Document$document = function (jsonString) {
+	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Data_Document$documentDecoder, jsonString);
+};
+var _user$project$Data_Document$Documents = function (a) {
+	return {documents: a};
+};
+var _user$project$Data_Document$documentsDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'documents',
+	_elm_lang$core$Json_Decode$list(_user$project$Data_Document$documentDecoder),
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Data_Document$Documents));
+var _user$project$Data_Document$documents = function (jsonString) {
+	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Data_Document$documentsDecoder, jsonString);
+};
+
+var _user$project$Data_Init$document1 = {title: 'Jabberwocky', author: 'Lewis Carroll', text: '‘Twas brillig, and the slithy toves\n   Did gyre and gimble in the wabe;\nAll mimsy were the borogoves,\n   And the mome raths outgrabe.\n\n“Beware the Jabberwock, my son\n   The jaws that bite, the claws that catch!\nBeware the Jubjub bird, and shun\n   The frumious Bandersnatch!”\n\nHe took his vorpal sword in hand;\n   Long time the manxome foe he sought—\nSo rested he by the Tumtum tree,\n   And stood awhile in thought.\n\nAnd, as in uffish thought he stood,\n   The Jabberwock, with eyes of flame,\nCame whiffling through the tulgey wood,\n   And burbled as it came!\n\nOne, two! One, two! And through and through\n   The vorpal blade went snicker-snack!\nHe left it dead, and with its head\n   He went galumphing back.\n\n“And hast thou slain the Jabberwock?\n   Come to my arms, my beamish boy!\nO frabjous day! Callooh! Callay!”\n   He chortled in his joy.\n\n‘Twas brillig, and the slithy toves\n   Did gyre and gimble in the wabe;\nAll mimsy were the borogoves,\n   And the mome raths outgrabe.\n'};
+var _user$project$Data_Init$document0 = {title: 'Oops!', author: 'Nobody', text: 'Sorry, we couldn\'t find that document'};
+var _user$project$Data_Init$author1 = {name: 'Lewis Carroll', identifier: 'lewis_carroll', photo_url: 'http://orig04.deviantart.net/8cd4/f/2011/167/8/a/jabberwocky_by_natzuurjk-d3j49so.png', url: 'https://www.poetryfoundation.org/poems-and-poets/poems/detail/42916'};
+var _user$project$Data_Init$initialModel = {
+	page: _user$project$Types$ReaderPage,
+	info: 'No messages',
+	errorMsg: '',
+	user_email: '',
+	username: '',
+	user_password: '',
+	user_token: '',
+	input_text: 'Carroll',
+	author_identifier: 'Carroll',
+	selectedAuthor: _user$project$Data_Init$author1,
+	authors: {
+		ctor: '::',
+		_0: _user$project$Data_Init$author1,
+		_1: {ctor: '[]'}
+	},
+	documents: {
+		ctor: '::',
+		_0: _user$project$Data_Init$document1,
+		_1: {ctor: '[]'}
+	},
+	selectedDocument: _user$project$Data_Init$document1
+};
+
+var _user$project$Action_Document$updateDocuments = F2(
+	function (model, documentsRecord) {
+		var selectedDocument = function () {
+			var _p0 = _elm_lang$core$List$head(documentsRecord.documents);
+			if (_p0.ctor === 'Just') {
+				return _p0._0;
+			} else {
+				return _user$project$Data_Init$document0;
+			}
+		}();
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.update(
+				model,
+				{documents: documentsRecord.documents, selectedDocument: selectedDocument, info: 'Documents: HTTP request OK'}),
+			_1: _elm_lang$core$Platform_Cmd$none
+		};
+	});
 
 var _user$project$Data_Author$authorDecoder = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
@@ -9782,55 +10451,48 @@ var _user$project$Data_Author$AuthorRecord = function (a) {
 	return {author: a};
 };
 
-var _user$project$Data_Document$documentDecoder = A3(
+var _user$project$Data_User$userEncoder = function (model) {
+	return _elm_lang$core$Json_Encode$object(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'user',
+				_1: _elm_lang$core$Json_Encode$object(
+					{
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple2',
+							_0: 'email',
+							_1: _elm_lang$core$Json_Encode$string(model.user_email)
+						},
+						_1: {
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: 'password',
+								_1: _elm_lang$core$Json_Encode$string(model.user_password)
+							},
+							_1: {ctor: '[]'}
+						}
+					})
+			},
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Data_User$Claims = F2(
+	function (a, b) {
+		return {username: a, user_id: b};
+	});
+var _user$project$Data_User$jwtDecoder = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'text',
-	_elm_lang$core$Json_Decode$string,
+	'user_id',
+	_elm_lang$core$Json_Decode$int,
 	A3(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-		'author',
+		'username',
 		_elm_lang$core$Json_Decode$string,
-		A3(
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-			'title',
-			_elm_lang$core$Json_Decode$string,
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Types$Document))));
-var _user$project$Data_Document$document = function (jsonString) {
-	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Data_Document$documentDecoder, jsonString);
-};
-var _user$project$Data_Document$Documents = function (a) {
-	return {documents: a};
-};
-var _user$project$Data_Document$documentsDecoder = A3(
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'documents',
-	_elm_lang$core$Json_Decode$list(_user$project$Data_Document$documentDecoder),
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Data_Document$Documents));
-var _user$project$Data_Document$documents = function (jsonString) {
-	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Data_Document$documentsDecoder, jsonString);
-};
-
-var _user$project$Data_Init$document1 = {title: 'Jabberwocky', author: 'Lewis Carroll', text: '‘Twas brillig, and the slithy toves\n   Did gyre and gimble in the wabe;\nAll mimsy were the borogoves,\n   And the mome raths outgrabe.\n\n“Beware the Jabberwock, my son\n   The jaws that bite, the claws that catch!\nBeware the Jubjub bird, and shun\n   The frumious Bandersnatch!”\n\nHe took his vorpal sword in hand;\n   Long time the manxome foe he sought—\nSo rested he by the Tumtum tree,\n   And stood awhile in thought.\n\nAnd, as in uffish thought he stood,\n   The Jabberwock, with eyes of flame,\nCame whiffling through the tulgey wood,\n   And burbled as it came!\n\nOne, two! One, two! And through and through\n   The vorpal blade went snicker-snack!\nHe left it dead, and with its head\n   He went galumphing back.\n\n“And hast thou slain the Jabberwock?\n   Come to my arms, my beamish boy!\nO frabjous day! Callooh! Callay!”\n   He chortled in his joy.\n\n‘Twas brillig, and the slithy toves\n   Did gyre and gimble in the wabe;\nAll mimsy were the borogoves,\n   And the mome raths outgrabe.\n'};
-var _user$project$Data_Init$document0 = {title: 'Oops!', author: 'Nobody', text: 'Sorry, we couldn\'t find that document'};
-var _user$project$Data_Init$author1 = {name: 'Lewis Carroll', identifier: 'lewis_carroll', photo_url: 'http://orig04.deviantart.net/8cd4/f/2011/167/8/a/jabberwocky_by_natzuurjk-d3j49so.png', url: 'https://www.poetryfoundation.org/poems-and-poets/poems/detail/42916'};
-var _user$project$Data_Init$initialModel = {
-	page: _user$project$Types$ReaderPage,
-	info: 'No messages',
-	input_text: 'Carroll',
-	author_identifier: 'Carroll',
-	selectedAuthor: _user$project$Data_Init$author1,
-	authors: {
-		ctor: '::',
-		_0: _user$project$Data_Init$author1,
-		_1: {ctor: '[]'}
-	},
-	documents: {
-		ctor: '::',
-		_0: _user$project$Data_Init$document1,
-		_1: {ctor: '[]'}
-	},
-	selectedDocument: _user$project$Data_Init$document1
-};
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Data_User$Claims)));
 
 var _user$project$Views_Document$viewTitle = F2(
 	function (selectedDocument, document) {
@@ -10141,6 +10803,7 @@ var _user$project$Request_Api$getDocumentsUrlPrefix = A2(_elm_lang$core$Basics_o
 var _user$project$Request_Api$getAuthorUrlPrefix = A2(_elm_lang$core$Basics_ops['++'], _user$project$Request_Api$api, 'authors/');
 var _user$project$Request_Api$getAuthorsUrlPrefix = A2(_elm_lang$core$Basics_ops['++'], _user$project$Request_Api$api, 'authors?author=');
 var _user$project$Request_Api$initialDocumentsUrl = A2(_elm_lang$core$Basics_ops['++'], _user$project$Request_Api$api, 'documents/author=ezra_pound');
+var _user$project$Request_Api$loginUrl = A2(_elm_lang$core$Basics_ops['++'], _user$project$Request_Api$api, 'sessions');
 
 var _user$project$Request_Author$getAuthors = function (author_identifier) {
 	var url = A2(_elm_lang$core$Basics_ops['++'], _user$project$Request_Api$getAuthorsUrlPrefix, author_identifier);
@@ -10173,12 +10836,12 @@ var _user$project$Views_Reader$buttonBar = function (model) {
 				_elm_lang$html$Html$button,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html_Events$onClick(_user$project$Types$GoToEditor),
+					_0: _elm_lang$html$Html_Events$onClick(_user$project$Types$GoToLogin),
 					_1: {ctor: '[]'}
 				},
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text('Edit'),
+					_0: _elm_lang$html$Html$text('Login'),
 					_1: {ctor: '[]'}
 				}),
 			_1: {
@@ -10187,7 +10850,7 @@ var _user$project$Views_Reader$buttonBar = function (model) {
 					_elm_lang$html$Html$button,
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Events$onClick(_user$project$Types$GoToNewDocument),
+						_0: _elm_lang$html$Html_Events$onClick(_user$project$Types$GoToEditor),
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$html$Html_Attributes$class('anotherButton'),
@@ -10196,10 +10859,29 @@ var _user$project$Views_Reader$buttonBar = function (model) {
 					},
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html$text('New'),
+						_0: _elm_lang$html$Html$text('Edit'),
 						_1: {ctor: '[]'}
 					}),
-				_1: {ctor: '[]'}
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$button,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onClick(_user$project$Types$GoToNewDocument),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class('anotherButton'),
+								_1: {ctor: '[]'}
+							}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('New'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
 			}
 		});
 };
@@ -10402,6 +11084,257 @@ var _user$project$Views_NewDocument$newDocument = function (model) {
 		});
 };
 
+var _user$project$Views_Login$loginForm = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$id('loginForm'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$input,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$id('email'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$type_('text'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$placeholder('Email'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onInput(_user$project$Types$Email),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				{ctor: '[]'}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$br,
+					{ctor: '[]'},
+					{ctor: '[]'}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$br,
+						{ctor: '[]'},
+						{ctor: '[]'}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$input,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$id('password'),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$type_('text'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$placeholder('Password'),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Events$onInput(_user$project$Types$Password),
+											_1: {ctor: '[]'}
+										}
+									}
+								}
+							},
+							{ctor: '[]'}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$br,
+								{ctor: '[]'},
+								{ctor: '[]'}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$br,
+									{ctor: '[]'},
+									{ctor: '[]'}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$button,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$id('loginButton'),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$html$Html_Events$onClick(_user$project$Types$Login),
+												_1: {ctor: '[]'}
+											}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('Sign in'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$br,
+											{ctor: '[]'},
+											{ctor: '[]'}),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$br,
+												{ctor: '[]'},
+												{ctor: '[]'}),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$p,
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html_Attributes$id('info'),
+														_1: {ctor: '[]'}
+													},
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html$text(model.info),
+														_1: {ctor: '[]'}
+													}),
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		});
+};
+var _user$project$Views_Login$buttonBar = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$id('buttonBar'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$button,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Events$onClick(_user$project$Types$GoToReader),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Read'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Views_Login$login = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _user$project$Views_Login$buttonBar(model),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$id('login'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$h3,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('Sign in'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: _user$project$Views_Login$loginForm(model),
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+
+var _user$project$Request_User$tokenDecoder = A2(_elm_lang$core$Json_Decode$field, 'token', _elm_lang$core$Json_Decode$string);
+var _user$project$Request_User$getTokenCompleted = F2(
+	function (model, result) {
+		var _p0 = result;
+		if (_p0.ctor === 'Ok') {
+			var _p1 = A2(_simonh1000$elm_jwt$Jwt$decodeToken, _user$project$Data_User$jwtDecoder, _p0._0);
+			if (_p1.ctor === 'Ok') {
+				var _p2 = _p1._0;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							username: _p2.username,
+							info: A2(_elm_lang$core$Basics_ops['++'], 'User: ', _p2.username)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			} else {
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							info: _elm_lang$core$Basics$toString(_p1._0)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			}
+		} else {
+			var _p3 = _p0._0;
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						errorMsg: _elm_lang$core$Basics$toString(_p3),
+						info: _elm_lang$core$Basics$toString(_p3)
+					}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		}
+	});
+var _user$project$Request_User$loginUser = F2(
+	function (model, loginUrl) {
+		var body = _elm_lang$http$Http$jsonBody(
+			_user$project$Data_User$userEncoder(model));
+		return A3(_elm_lang$http$Http$post, loginUrl, body, _user$project$Request_User$tokenDecoder);
+	});
+var _user$project$Request_User$loginUserCmd = F2(
+	function (model, loginUrl) {
+		return A2(
+			_elm_lang$http$Http$send,
+			_user$project$Types$GetTokenCompleted,
+			A2(_user$project$Request_User$loginUser, model, loginUrl));
+	});
+
 var _user$project$Main$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
@@ -10443,22 +11376,7 @@ var _user$project$Main$update = F2(
 				if (_p0._0.ctor === 'Ok') {
 					var _p2 = _user$project$Data_Document$documents(_p0._0._0);
 					if (_p2.ctor === 'Ok') {
-						var _p4 = _p2._0;
-						var selectedDocument = function () {
-							var _p3 = _elm_lang$core$List$head(_p4.documents);
-							if (_p3.ctor === 'Just') {
-								return _p3._0;
-							} else {
-								return _user$project$Data_Init$document0;
-							}
-						}();
-						return {
-							ctor: '_Tuple2',
-							_0: _elm_lang$core$Native_Utils.update(
-								model,
-								{documents: _p4.documents, selectedDocument: selectedDocument, info: 'Documents: HTTP request OK'}),
-							_1: _elm_lang$core$Platform_Cmd$none
-						};
+						return A2(_user$project$Action_Document$updateDocuments, model, _p2._0);
 					} else {
 						return {
 							ctor: '_Tuple2',
@@ -10484,15 +11402,15 @@ var _user$project$Main$update = F2(
 				}
 			case 'GetAuthor':
 				if (_p0._0.ctor === 'Ok') {
-					var _p5 = _user$project$Data_Author$author(_p0._0._0);
-					if (_p5.ctor === 'Ok') {
-						var _p6 = _p5._0;
+					var _p3 = _user$project$Data_Author$author(_p0._0._0);
+					if (_p3.ctor === 'Ok') {
+						var _p4 = _p3._0;
 						return {
 							ctor: '_Tuple2',
 							_0: _elm_lang$core$Native_Utils.update(
 								model,
-								{selectedAuthor: _p6}),
-							_1: _user$project$Request_Document$getDocuments(_p6.identifier)
+								{selectedAuthor: _p4}),
+							_1: _user$project$Request_Document$getDocuments(_p4.identifier)
 						};
 					} else {
 						return {
@@ -10519,13 +11437,13 @@ var _user$project$Main$update = F2(
 				}
 			case 'GetAuthors':
 				if (_p0._0.ctor === 'Ok') {
-					var _p7 = _user$project$Data_Author$authors(_p0._0._0);
-					if (_p7.ctor === 'Ok') {
+					var _p5 = _user$project$Data_Author$authors(_p0._0._0);
+					if (_p5.ctor === 'Ok') {
 						return {
 							ctor: '_Tuple2',
 							_0: _elm_lang$core$Native_Utils.update(
 								model,
-								{authors: _p7._0.authors, info: 'Author list loaded'}),
+								{authors: _p5._0.authors, info: 'Author list loaded'}),
 							_1: _elm_lang$core$Platform_Cmd$none
 						};
 					} else {
@@ -10575,7 +11493,7 @@ var _user$project$Main$update = F2(
 						{page: _user$project$Types$ReaderPage}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
-			default:
+			case 'GoToNewDocument':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -10583,6 +11501,38 @@ var _user$project$Main$update = F2(
 						{page: _user$project$Types$NewDocumentPage}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
+			case 'GoToLogin':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{page: _user$project$Types$LoginPage}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'Email':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{user_email: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'Password':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{user_password: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'Login':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: A2(_user$project$Request_User$loginUserCmd, model, _user$project$Request_Api$loginUrl)
+				};
+			default:
+				return A2(_user$project$Request_User$getTokenCompleted, model, _p0._0);
 		}
 	});
 var _user$project$Main$notFound = function (model) {
@@ -10603,14 +11553,16 @@ var _user$project$Main$notFound = function (model) {
 		});
 };
 var _user$project$Main$page = function (model) {
-	var _p8 = model.page;
-	switch (_p8.ctor) {
+	var _p6 = model.page;
+	switch (_p6.ctor) {
 		case 'ReaderPage':
 			return _user$project$Views_Reader$reader(model);
 		case 'EditorPage':
 			return _user$project$Views_Editor$editor(model);
 		case 'NewDocumentPage':
 			return _user$project$Views_NewDocument$newDocument(model);
+		case 'LoginPage':
+			return _user$project$Views_Login$login(model);
 		default:
 			return _user$project$Main$notFound(model);
 	}
@@ -10630,7 +11582,7 @@ var _user$project$Main$main = _elm_lang$html$Html$program(
 		init: {ctor: '_Tuple2', _0: _user$project$Data_Init$initialModel, _1: _elm_lang$core$Platform_Cmd$none},
 		view: _user$project$Main$view,
 		update: _user$project$Main$update,
-		subscriptions: function (_p9) {
+		subscriptions: function (_p7) {
 			return _elm_lang$core$Platform_Sub$none;
 		}
 	})();

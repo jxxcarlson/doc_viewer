@@ -11,8 +11,9 @@ import Views.Author exposing(authorSidebar)
 
 buttonBar model =
   div [id "buttonBar"] [
-     button [onClick GoToEditor] [text "Edit"]
-   , button [onClick GoToNewDocument, class "anotherButton"] [text "New"]
+    button [onClick GoToLogin] [text "Login"]
+    , button [onClick GoToEditor, class "anotherButton"] [text "Edit"]
+    , button [onClick GoToNewDocument, class "anotherButton"] [text "New"]
   ]
 
 reader model =

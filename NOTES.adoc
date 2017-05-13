@@ -1,5 +1,14 @@
+
+:toc2:
+:sectnums:
+
 elm-make doc_viewer.elm  --output elm.js
 
+
+== Recommendations
+
+- http://blog.jenkster.com/2016/06/how-elm-slays-a-ui-antipattern.html
+- http://package.elm-lang.org/packages/krisajenkins/remotedata/latest
 
 == Heroku Info
 
@@ -21,10 +30,12 @@ heroku buildpacks:add https://github.com/heroku/heroku-buildpack-nodejs#v83
 
 https://becoming-functional.com/serving-elm-assets-from-a-phoenix-app-ef328c63b236
 
+https://blog.codeship.com/ridiculously-fast-api-authentication-with-phoenix/[Ridiculously fast API authentication with Phoenix]
 == Architecture
 
 http://www.lambdacat.com/road-to-elm-structuring-your-application/
 https://github.com/foxdonut/adventures-reactive-web-dev/tree/master/client-elm
+https://gist.github.com/jah2488/ca3310ad385957e2e616c646de2275fb[Slack advice, District]
 
 == RT Feldman
 
@@ -36,5 +47,26 @@ https://github.com/foxdonut/adventures-reactive-web-dev/tree/master/client-elm
 - https://guide.elm-lang.org/[Guide]
 - http://package.elm-lang.org/packages/rtfeldman/elm-css/latest[elm-css]
 
+- https://github.com/eeue56/take-home/blob/master/src/Env.elm[ENV]
+
 
 http://package.elm-lang.org/packages/elm-lang/core/5.1.1/Debug#
+
+== JSON Encode and Decode
+
+- http://package.elm-lang.org/packages/elm-lang/core/latest/Json-Encode[elm-lang/Json-Encode]
+- https://gist.github.com/hipertracker/78c586687290582008ad7c1648a7a712[hipertracker Book.elm]
+- http://package.elm-lang.org/packages/elm-lang/http/latest/Http[elm-lang, http]
+
+- https://www.brianthicks.com/post/2016/10/17/composing-decoders-like-lego/[Composing Decoders Like Lego (Brian Hicks)]
+- http://elmplayground.com/decoding-json-in-elm-1[Decoding JSON in Elm -- the Elm Playground]
+
+== Token, JWT, Elm-frontend
+
+- https://auth0.com/blog/creating-your-first-elm-app-part-2/[Creating app, part 2]
+
+- http://package.elm-lang.org/packages/simonh1000/elm-jwt/latest/Jwt[Elm-JWT]
+
+== CORS
+
+- https://hexdocs.pm/corsica/Corsica.html[Corsica Docs]

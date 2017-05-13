@@ -10,6 +10,13 @@ type alias Author = { name : String, identifier: String, url: String, photo_url 
 type alias Model = {
      page: Page,
      info: String,
+     errorMsg: String,
+
+     user_email: String,
+     user_password: String,
+     username: String,
+     user_token : String,
+     
      input_text: String,
      author_identifier: String,
      selectedAuthor: Author,
@@ -31,9 +38,16 @@ type Msg
     | GoToEditor
     | GoToReader
     | GoToNewDocument
+    | GoToLogin
+
+    | Email String
+    | Password String
+    | Login
+    | GetTokenCompleted (Result Http.Error String)
 
 type Page
    = ReaderPage
    | EditorPage
    | NewDocumentPage
+   | LoginPage
    | NotFoundPage

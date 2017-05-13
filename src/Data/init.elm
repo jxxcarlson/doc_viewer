@@ -43,11 +43,15 @@ All mimsy were the borogoves,
 """
     }
 
-
 initialModel : Model
 initialModel = {
      page = ReaderPage
      , info = "No messages"
+     , errorMsg = ""
+     , user_email = ""
+     , username = ""
+     , user_password = ""
+     , user_token = ""
      , input_text = "Carroll"
      , author_identifier = "Carroll"
      , selectedAuthor = author1

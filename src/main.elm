@@ -14,13 +14,19 @@ import Request.Document exposing(..)
 import Views.Reader exposing(reader)
 import Views.Editor exposing(editor)
 import Views.NewDocument exposing(newDocument)
+import Views.Login exposing(login)
 
 import Data.Author exposing(..)
 import Data.Document exposing(..)
 import Data.Init exposing(initialModel, document0)
 
+import Request.User exposing(loginUserCmd, getTokenCompleted)
+import Request.Api exposing(loginUrl)
+import Action.Document exposing(updateDocuments)
+
 -- import Routing exposing(parseLocation)
 
+-- The view is a function of the current page
 view : Model -> Html Msg
 view model =
   div [] [ page model ]
@@ -33,6 +39,8 @@ page model =
       editor model
     NewDocumentPage ->
       newDocument model
+    LoginPage ->
+      login model
     NotFoundPage ->
       notFound model
 
@@ -65,11 +73,7 @@ update msg model =
       GetDocuments (Ok serverReply) ->
         case (documents serverReply) of
           (Ok documentsRecord) ->
-            let selectedDocument = case List.head documentsRecord.documents of
-              (Just document) -> document
-              (Nothing) -> document0
-            in
-               ( {model | documents =  documentsRecord.documents, selectedDocument = selectedDocument, info = "Documents: HTTP request OK"}, Cmd.none)
+            updateDocuments model documentsRecord
           (Err _) -> ( {model | info = "Could not decode server reply"}, Cmd.none)
       GetDocuments (Err _) ->
         ( {model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )
@@ -100,6 +104,17 @@ update msg model =
         ( {model | page = ReaderPage }, Cmd.none )
       GoToNewDocument ->
         ( {model | page = NewDocumentPage }, Cmd.none )
+      GoToLogin ->
+        ( {model | page = LoginPage }, Cmd.none )
+
+      Email email ->
+        ( { model | user_email = email} , Cmd.none )
+      Password password ->
+        ( { model | user_password = password} , Cmd.none )
+      Login ->
+        ( model, loginUserCmd model loginUrl )
+      GetTokenCompleted result ->
+        getTokenCompleted model result
       -- OnLocationChange location ->
       --   let
       --     newRoute =
