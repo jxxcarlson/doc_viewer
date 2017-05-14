@@ -10798,7 +10798,7 @@ var _user$project$Views_Author$authorSidebar = function (model) {
 		});
 };
 
-var _user$project$Request_Api$api = 'http://localhost:4000/api/v1/';
+var _user$project$Request_Api$api = 'https://warm-hamlet-26117.herokuapp.com/api/v1/';
 var _user$project$Request_Api$getDocumentsUrlPrefix = A2(_elm_lang$core$Basics_ops['++'], _user$project$Request_Api$api, 'documents?author=');
 var _user$project$Request_Api$getAuthorUrlPrefix = A2(_elm_lang$core$Basics_ops['++'], _user$project$Request_Api$api, 'authors/');
 var _user$project$Request_Api$getAuthorsUrlPrefix = A2(_elm_lang$core$Basics_ops['++'], _user$project$Request_Api$api, 'authors?author=');
