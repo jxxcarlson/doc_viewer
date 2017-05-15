@@ -31,6 +31,7 @@ view : Model -> Html Msg
 view model =
   div [] [ page model ]
 
+page : Model -> Html Msg
 page model =
   case model.page of
     ReaderPage ->
@@ -53,6 +54,7 @@ notFound model =
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
+      
       SelectDocument document ->
         ( { model | selectedDocument = document }, Cmd.none )
       SelectAuthor author ->
@@ -106,6 +108,7 @@ update msg model =
         ( {model | page = NewDocumentPage }, Cmd.none )
       GoToLogin ->
         ( {model | page = LoginPage }, Cmd.none )
+
 
       Email email ->
         ( { model | user_email = email} , Cmd.none )

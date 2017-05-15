@@ -10286,7 +10286,9 @@ var _user$project$Types$Model = function (a) {
 										return function (k) {
 											return function (l) {
 												return function (m) {
-													return {page: a, info: b, errorMsg: c, user_email: d, user_password: e, username: f, user_token: g, input_text: h, author_identifier: i, selectedAuthor: j, authors: k, documents: l, selectedDocument: m};
+													return function (n) {
+														return {page: a, info: b, errorMsg: c, user_email: d, user_password: e, username: f, user_token: g, input_text: h, author_identifier: i, selectedAuthor: j, authors: k, documents: l, selectedDocument: m, editor_text: n};
+													};
 												};
 											};
 										};
@@ -10394,7 +10396,8 @@ var _user$project$Data_Init$initialModel = {
 		_0: _user$project$Data_Init$document1,
 		_1: {ctor: '[]'}
 	},
-	selectedDocument: _user$project$Data_Init$document1
+	selectedDocument: _user$project$Data_Init$document1,
+	editor_text: ''
 };
 
 var _user$project$Action_Document$updateDocuments = F2(
@@ -10798,7 +10801,7 @@ var _user$project$Views_Author$authorSidebar = function (model) {
 		});
 };
 
-var _user$project$Request_Api$api = 'https://warm-hamlet-26117.herokuapp.com/api/v1/';
+var _user$project$Request_Api$api = 'http://localhost:4000/api/v1/';
 var _user$project$Request_Api$getDocumentsUrlPrefix = A2(_elm_lang$core$Basics_ops['++'], _user$project$Request_Api$api, 'documents?author=');
 var _user$project$Request_Api$getAuthorUrlPrefix = A2(_elm_lang$core$Basics_ops['++'], _user$project$Request_Api$api, 'authors/');
 var _user$project$Request_Api$getAuthorsUrlPrefix = A2(_elm_lang$core$Basics_ops['++'], _user$project$Request_Api$api, 'authors?author=');
@@ -10908,6 +10911,56 @@ var _user$project$Views_Reader$reader = function (model) {
 		});
 };
 
+var _user$project$Views_Editor$onKeyDown = function (tagger) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'keydown',
+		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$keyCode));
+};
+var _user$project$Views_Editor$editorTools = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$id('toolBar'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$span,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$id('buttonBarTitle'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('toolBarItem'),
+						_1: {ctor: '[]'}
+					}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Editor'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$button,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$id('saveEditButton'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Save'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
 var _user$project$Views_Editor$buttonBar = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -10970,24 +11023,29 @@ var _user$project$Views_Editor$editor = function (model) {
 					},
 					{
 						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$h3,
-							{ctor: '[]'},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text('Editor'),
-								_1: {ctor: '[]'}
-							}),
+						_0: _user$project$Views_Editor$editorTools(model),
 						_1: {
 							ctor: '::',
 							_0: A2(
-								_elm_lang$html$Html$p,
-								{ctor: '[]'},
+								_elm_lang$html$Html$textarea,
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text('Under construction ...'),
-									_1: {ctor: '[]'}
-								}),
+									_0: _elm_lang$html$Html_Attributes$id('editor_text'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$value(model.input_text),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Events$onInput(_user$project$Types$Input),
+											_1: {
+												ctor: '::',
+												_0: _user$project$Views_Editor$onKeyDown(_user$project$Types$KeyDown),
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								},
+								{ctor: '[]'}),
 							_1: {ctor: '[]'}
 						}
 					}),

@@ -58,4 +58,6 @@ initialModel = {
      , authors = [author1]
      , documents = [ document1 ]
      , selectedDocument = document1
+
+     ,  editor_text = ""
   }

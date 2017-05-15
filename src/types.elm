@@ -16,13 +16,15 @@ type alias Model = {
      user_password: String,
      username: String,
      user_token : String,
-     
+
      input_text: String,
      author_identifier: String,
      selectedAuthor: Author,
      authors: List Author,
      documents: List Document,
-     selectedDocument: Document
+     selectedDocument: Document,
+
+     editor_text: String
 }
 
 type Msg
