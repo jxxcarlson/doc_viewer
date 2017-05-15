@@ -10302,6 +10302,10 @@ var _user$project$Types$Model = function (a) {
 		};
 	};
 };
+var _user$project$Types$Signout = {ctor: 'Signout'};
+var _user$project$Types$UpdateSelectedDocument = function (a) {
+	return {ctor: 'UpdateSelectedDocument', _0: a};
+};
 var _user$project$Types$GetTokenCompleted = function (a) {
 	return {ctor: 'GetTokenCompleted', _0: a};
 };
@@ -10825,6 +10829,10 @@ var _user$project$Request_Document$getDocuments = function (author_identifier) {
 	return A2(_elm_lang$http$Http$send, _user$project$Types$GetDocuments, request);
 };
 
+var _user$project$Utility$signinButtonText = function (model) {
+	return _elm_lang$core$Native_Utils.eq(model.user_token, '') ? 'Sign in' : 'Sign out';
+};
+
 var _user$project$Views_Reader$buttonBar = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -10844,7 +10852,8 @@ var _user$project$Views_Reader$buttonBar = function (model) {
 				},
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text('Login'),
+					_0: _elm_lang$html$Html$text(
+						_user$project$Utility$signinButtonText(model)),
 					_1: {ctor: '[]'}
 				}),
 			_1: {
@@ -11033,10 +11042,10 @@ var _user$project$Views_Editor$editor = function (model) {
 									_0: _elm_lang$html$Html_Attributes$id('editor_text'),
 									_1: {
 										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$value(model.input_text),
+										_0: _elm_lang$html$Html_Attributes$value(model.selectedDocument.text),
 										_1: {
 											ctor: '::',
-											_0: _elm_lang$html$Html_Events$onInput(_user$project$Types$Input),
+											_0: _elm_lang$html$Html_Events$onInput(_user$project$Types$UpdateSelectedDocument),
 											_1: {
 												ctor: '::',
 												_0: _user$project$Views_Editor$onKeyDown(_user$project$Types$KeyDown),
@@ -11142,7 +11151,7 @@ var _user$project$Views_NewDocument$newDocument = function (model) {
 		});
 };
 
-var _user$project$Views_Login$loginForm = function (model) {
+var _user$project$Views_Login$signinForm = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -11259,7 +11268,8 @@ var _user$project$Views_Login$loginForm = function (model) {
 													},
 													{
 														ctor: '::',
-														_0: _elm_lang$html$Html$text(model.info),
+														_0: _elm_lang$html$Html$text(
+															A2(_elm_lang$core$Basics_ops['++'], 'Token: ', model.user_token)),
 														_1: {ctor: '[]'}
 													}),
 												_1: {ctor: '[]'}
@@ -11299,7 +11309,7 @@ var _user$project$Views_Login$buttonBar = function (model) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Views_Login$login = function (model) {
+var _user$project$Views_Login$signinView = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
@@ -11327,7 +11337,7 @@ var _user$project$Views_Login$login = function (model) {
 							}),
 						_1: {
 							ctor: '::',
-							_0: _user$project$Views_Login$loginForm(model),
+							_0: _user$project$Views_Login$signinForm(model),
 							_1: {ctor: '[]'}
 						}
 					}),
@@ -11335,13 +11345,102 @@ var _user$project$Views_Login$login = function (model) {
 			}
 		});
 };
+var _user$project$Views_Login$signoutView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _user$project$Views_Login$buttonBar(model),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$id('login'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$p,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$id('username'),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(
+									A2(_elm_lang$core$Basics_ops['++'], 'Signed in as ', model.username)),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$br,
+								{ctor: '[]'},
+								{ctor: '[]'}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$br,
+									{ctor: '[]'},
+									{ctor: '[]'}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$button,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$id('logoutButton'),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$html$Html_Events$onClick(_user$project$Types$Signout),
+												_1: {ctor: '[]'}
+											}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('Sign out'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$p,
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$id('info'),
+												_1: {ctor: '[]'}
+											},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text(model.info),
+												_1: {ctor: '[]'}
+											}),
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$Views_Login$signin = function (model) {
+	return _elm_lang$core$Native_Utils.eq(model.user_token, '') ? _user$project$Views_Login$signinView(model) : _user$project$Views_Login$signoutView(model);
+};
 
 var _user$project$Request_User$tokenDecoder = A2(_elm_lang$core$Json_Decode$field, 'token', _elm_lang$core$Json_Decode$string);
 var _user$project$Request_User$getTokenCompleted = F2(
 	function (model, result) {
 		var _p0 = result;
 		if (_p0.ctor === 'Ok') {
-			var _p1 = A2(_simonh1000$elm_jwt$Jwt$decodeToken, _user$project$Data_User$jwtDecoder, _p0._0);
+			var _p3 = _p0._0;
+			var _p1 = A2(_simonh1000$elm_jwt$Jwt$decodeToken, _user$project$Data_User$jwtDecoder, _p3);
 			if (_p1.ctor === 'Ok') {
 				var _p2 = _p1._0;
 				return {
@@ -11350,7 +11449,9 @@ var _user$project$Request_User$getTokenCompleted = F2(
 						model,
 						{
 							username: _p2.username,
-							info: A2(_elm_lang$core$Basics_ops['++'], 'User: ', _p2.username)
+							user_token: _p3,
+							info: A2(_elm_lang$core$Basics_ops['++'], 'Succes: signed in as ', _p2.username),
+							page: _user$project$Types$ReaderPage
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -11366,14 +11467,14 @@ var _user$project$Request_User$getTokenCompleted = F2(
 				};
 			}
 		} else {
-			var _p3 = _p0._0;
+			var _p4 = _p0._0;
 			return {
 				ctor: '_Tuple2',
 				_0: _elm_lang$core$Native_Utils.update(
 					model,
 					{
-						errorMsg: _elm_lang$core$Basics$toString(_p3),
-						info: _elm_lang$core$Basics$toString(_p3)
+						errorMsg: _elm_lang$core$Basics$toString(_p4),
+						info: _elm_lang$core$Basics$toString(_p4)
 					}),
 				_1: _elm_lang$core$Platform_Cmd$none
 			};
@@ -11589,8 +11690,28 @@ var _user$project$Main$update = F2(
 					_0: model,
 					_1: A2(_user$project$Request_User$loginUserCmd, model, _user$project$Request_Api$loginUrl)
 				};
-			default:
+			case 'GetTokenCompleted':
 				return A2(_user$project$Request_User$getTokenCompleted, model, _p0._0);
+			case 'Signout':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{user_token: '', username: ''}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				var currentDocument = model.selectedDocument;
+				var updatedDocument = _elm_lang$core$Native_Utils.update(
+					currentDocument,
+					{text: _p0._0});
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{selectedDocument: updatedDocument}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 		}
 	});
 var _user$project$Main$notFound = function (model) {
@@ -11620,7 +11741,7 @@ var _user$project$Main$page = function (model) {
 		case 'NewDocumentPage':
 			return _user$project$Views_NewDocument$newDocument(model);
 		case 'LoginPage':
-			return _user$project$Views_Login$login(model);
+			return _user$project$Views_Login$signin(model);
 		default:
 			return _user$project$Main$notFound(model);
 	}

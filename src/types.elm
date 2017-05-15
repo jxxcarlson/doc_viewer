@@ -46,6 +46,8 @@ type Msg
     | Password String
     | Login
     | GetTokenCompleted (Result Http.Error String)
+    | UpdateSelectedDocument String
+    | Signout
 
 type Page
    = ReaderPage

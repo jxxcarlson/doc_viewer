@@ -20,8 +20,8 @@ editor model =
     , div [id "editor"] [
        editorTools model
       , textarea [id "editor_text"
-      , Html.Attributes.value model.input_text
-      , HE.onInput Input
+      , Html.Attributes.value model.selectedDocument.text
+      , HE.onInput UpdateSelectedDocument
       , onKeyDown KeyDown]
       [ ]
     ]

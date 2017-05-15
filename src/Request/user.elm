@@ -37,7 +37,12 @@ getTokenCompleted model result =
     case result of
         Ok newToken ->
            case Jwt.decodeToken jwtDecoder newToken of
-             Ok value -> ({model | username = value.username, info = "User: " ++ value.username}, Cmd.none)
+             Ok value -> ({model | username = value.username,
+                user_token = newToken,
+                info = "Succes: signed in as " ++ value.username,
+                  page = ReaderPage },
+                Cmd.none)
+
              Err error ->({model | info = toString error}, Cmd.none)
         Err error ->
             ( { model | errorMsg = (toString error),

@@ -14,7 +14,7 @@ import Request.Document exposing(..)
 import Views.Reader exposing(reader)
 import Views.Editor exposing(editor)
 import Views.NewDocument exposing(newDocument)
-import Views.Login exposing(login)
+import Views.Login exposing(signin)
 
 import Data.Author exposing(..)
 import Data.Document exposing(..)
@@ -41,7 +41,7 @@ page model =
     NewDocumentPage ->
       newDocument model
     LoginPage ->
-      login model
+      signin model
     NotFoundPage ->
       notFound model
 
@@ -54,7 +54,7 @@ notFound model =
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
-      
+
       SelectDocument document ->
         ( { model | selectedDocument = document }, Cmd.none )
       SelectAuthor author ->
@@ -118,6 +118,15 @@ update msg model =
         ( model, loginUserCmd model loginUrl )
       GetTokenCompleted result ->
         getTokenCompleted model result
+      Signout ->
+        ( { model | user_token = "", username = ""}, Cmd.none)
+
+
+      UpdateSelectedDocument text ->
+        let
+          currentDocument  = model.selectedDocument
+          updatedDocument = { currentDocument | text = text }
+        in ( { model | selectedDocument = updatedDocument }, Cmd.none)
       -- OnLocationChange location ->
       --   let
       --     newRoute =

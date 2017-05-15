@@ -1,4 +1,4 @@
-module Views.Login exposing(login)
+module Views.Login exposing(signin)
 
 import Types exposing(..)
 
@@ -14,18 +14,26 @@ buttonBar model =
      button [onClick GoToReader] [text "Read"]
   ]
 
-login model =
-  div [] [
+signinView : Model -> Html Msg
+signinView model =
+    div [] [
     buttonBar model
     , div [id "login"] [
        h3 [] [ text "Sign in"]
-      , loginForm model
+      , signinForm model
     ]
    ]
 
+signin : Model -> Html Msg
+signin model =
+  if model.user_token == "" then
+    signinView model
+  else
+    signoutView model
 
-loginForm : Model -> Html Msg
-loginForm model =
+
+signinForm : Model -> Html Msg
+signinForm model =
   div [ id "loginForm"] [
     input [id "email", type_ "text" , placeholder "Email", onInput Email] []
     , br [] [], br [] []
@@ -33,5 +41,17 @@ loginForm model =
     , br [] [], br [] []
     , button [ id "loginButton", onClick Login ] [text "Sign in"]
     , br [] [], br [] []
-    , p [id "info"] [ text model.info ]
+    , p [id "info"] [ text ("Token: " ++ model.user_token) ]
+  ]
+
+signoutView : Model -> Html Msg
+signoutView model =
+  div [] [
+    buttonBar model
+    , div [id "login"] [
+       p [id "username"] [ text ("Signed in as " ++ model.username)]
+      , br [] [], br [] []
+      , button [ id "logoutButton", onClick Signout ] [text "Sign out"]
+      , p [id "info"] [ text model.info ]
+    ]
   ]
