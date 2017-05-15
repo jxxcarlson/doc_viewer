@@ -41,7 +41,7 @@ signinForm model =
     , br [] [], br [] []
     , button [ id "loginButton", onClick Login ] [text "Sign in"]
     , br [] [], br [] []
-    , p [id "info"] [ text ("Token: " ++ model.user_token) ]
+    -- , p [id "info"] [ text ("Token: " ++ model.user_token) ]
   ]
 
 signoutView : Model -> Html Msg
@@ -52,6 +52,6 @@ signoutView model =
        p [id "username"] [ text ("Signed in as " ++ model.username)]
       , br [] [], br [] []
       , button [ id "logoutButton", onClick Signout ] [text "Sign out"]
-      , p [id "info"] [ text model.info ]
+      -- , p [id "info"] [ text model.info ]
     ]
   ]

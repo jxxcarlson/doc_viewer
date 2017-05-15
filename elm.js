@@ -11257,23 +11257,7 @@ var _user$project$Views_Login$signinForm = function (model) {
 												_elm_lang$html$Html$br,
 												{ctor: '[]'},
 												{ctor: '[]'}),
-											_1: {
-												ctor: '::',
-												_0: A2(
-													_elm_lang$html$Html$p,
-													{
-														ctor: '::',
-														_0: _elm_lang$html$Html_Attributes$id('info'),
-														_1: {ctor: '[]'}
-													},
-													{
-														ctor: '::',
-														_0: _elm_lang$html$Html$text(
-															A2(_elm_lang$core$Basics_ops['++'], 'Token: ', model.user_token)),
-														_1: {ctor: '[]'}
-													}),
-												_1: {ctor: '[]'}
-											}
+											_1: {ctor: '[]'}
 										}
 									}
 								}
@@ -11406,22 +11390,7 @@ var _user$project$Views_Login$signoutView = function (model) {
 											_0: _elm_lang$html$Html$text('Sign out'),
 											_1: {ctor: '[]'}
 										}),
-									_1: {
-										ctor: '::',
-										_0: A2(
-											_elm_lang$html$Html$p,
-											{
-												ctor: '::',
-												_0: _elm_lang$html$Html_Attributes$id('info'),
-												_1: {ctor: '[]'}
-											},
-											{
-												ctor: '::',
-												_0: _elm_lang$html$Html$text(model.info),
-												_1: {ctor: '[]'}
-											}),
-										_1: {ctor: '[]'}
-									}
+									_1: {ctor: '[]'}
 								}
 							}
 						}
