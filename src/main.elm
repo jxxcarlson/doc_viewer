@@ -20,9 +20,11 @@ import Data.Author exposing(..)
 import Data.Document exposing(..)
 import Data.Init exposing(initialModel, document0)
 
-import Request.User exposing(loginUserCmd, getTokenCompleted)
-import Request.Api exposing(loginUrl)
+import Request.User exposing(loginUserCmd, getTokenCompleted, registerUserCmd)
+import Request.Api exposing(loginUrl, registerUserUrl)
+
 import Action.Document exposing(updateDocuments)
+import Action.User exposing(..)
 
 -- import Routing exposing(parseLocation)
 
@@ -108,18 +110,27 @@ update msg model =
         ( {model | page = NewDocumentPage }, Cmd.none )
       GoToLogin ->
         ( {model | page = LoginPage }, Cmd.none )
+      ToggleRegister ->
+        ( {model | registerUser = not model.registerUser }, Cmd.none )
 
 
+      Name name ->
+        updateName model name
+      Username username ->
+        updateUsername model username
       Email email ->
-        ( { model | user_email = email} , Cmd.none )
+        updateEmail model email
       Password password ->
-        ( { model | user_password = password} , Cmd.none )
+        updatePassword model password
       Login ->
         ( model, loginUserCmd model loginUrl )
+      Register ->
+              ( model, registerUserCmd model registerUserUrl )
       GetTokenCompleted result ->
         getTokenCompleted model result
       Signout ->
-        ( { model | user_token = "", username = ""}, Cmd.none)
+        signout model
+
 
 
       UpdateSelectedDocument text ->

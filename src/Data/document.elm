@@ -1,6 +1,7 @@
 module Data.Document exposing(documents, Documents)
 
-import Json.Decode exposing (at, int, list, string, decodeString, Decoder)
+import Json.Encode as Encode exposing (..)
+import Json.Decode as Decode exposing (at, int, list, string, decodeString, Decoder)
 import Json.Decode.Pipeline as JPipeline exposing (decode, required, optional, hardcoded)
 
 import Types exposing(..)
@@ -17,18 +18,29 @@ type alias Documents = { documents: List Document }
 
 -- FLAGS: https://guide.elm-lang.org/interop/javascript.html#flags
 
+
+documentEncoder : Model -> Encode.Value
+documentEncoder model =
+  Encode.object [ ("document",
+    Encode.object
+          [ ("title", Encode.string model.selectedDocument.title)
+          , ("author", Encode.string model.selectedDocument.author)
+          , ("text", Encode.string model.selectedDocument.text)
+          ]
+  )]
+
 documentDecoder : Decoder Document
 documentDecoder =
   decode Document
-    |> JPipeline.required "title" string
-    |> JPipeline.required "author" string
-    |> JPipeline.required "text" string
+    |> JPipeline.required "title" Decode.string
+    |> JPipeline.required "author" Decode.string
+    |> JPipeline.required "text" Decode.string
 
 documentsDecoder : Decoder Documents
 documentsDecoder =
   decode
     Documents
-    |> required "documents" (list documentDecoder)
+    |> required "documents" (Decode.list documentDecoder)
 
 document : String -> Result String Document
 document jsonString =

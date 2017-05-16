@@ -6,14 +6,19 @@ import Http exposing (send)
 import Json.Decode as Decode exposing (..)
 import Jwt exposing(decodeToken)
 
-import Request.Api exposing(loginUrl)
-import Data.User exposing(userEncoder, jwtDecoder)
+import Request.Api exposing(loginUrl, registerUserUrl)
+import Data.User exposing(signinEncoder, jwtDecoder, registerUserEncoder)
 import Types exposing(..)
 
 
 loginUserCmd : Model -> String -> Cmd Msg
 loginUserCmd model loginUrl =
     Http.send GetTokenCompleted (loginUser model loginUrl)
+
+registerUserCmd : Model -> String -> Cmd Msg
+registerUserCmd model registerUserUrl =
+    Http.send GetTokenCompleted (registerUser model registerUserUrl)
+
 
 -- http://package.elm-lang.org/packages/elm-lang/http/1.0.0/Http#
 -- http://package.elm-lang.org/packages/elm-lang/http/1.0.0/Http#send
@@ -26,7 +31,7 @@ loginUser model loginUrl =
     let
         body =
             model
-                |> userEncoder
+                |> signinEncoder
                 |> Http.jsonBody
     in
         Http.post loginUrl body tokenDecoder
@@ -37,9 +42,13 @@ getTokenCompleted model result =
     case result of
         Ok newToken ->
            case Jwt.decodeToken jwtDecoder newToken of
-             Ok value -> ({model | username = value.username,
-                user_token = newToken,
-                info = "Succes: signed in as " ++ value.username,
+             Ok value ->
+              let
+                user = model.current_user
+                updated_user = { user | username = value.username, token = newToken }
+              in
+                ({model | current_user = updated_user,
+                  info = "Succes: signed in as " ++ value.username,
                   page = ReaderPage },
                 Cmd.none)
 
@@ -49,6 +58,17 @@ getTokenCompleted model result =
                info = (toString error)} , Cmd.none )
 
 -- |> Debug.log "error in getTokenCompleted"
+
+registerUser : Model -> String -> Http.Request String
+registerUser model c =
+    let
+        body =
+            model
+                |> registerUserEncoder
+                |> Http.jsonBody
+    in
+        Http.post registerUserUrl body tokenDecoder
+
 
 tokenDecoder : Decoder String
 tokenDecoder =

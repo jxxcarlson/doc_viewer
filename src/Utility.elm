@@ -4,7 +4,7 @@ import Types exposing(Model)
 
 signinButtonText : Model -> String
 signinButtonText model =
-  if model.user_token == "" then
+  if model.current_user.token == "" then
     "Sign in"
   else
     "Sign out"

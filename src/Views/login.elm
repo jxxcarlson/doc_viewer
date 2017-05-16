@@ -8,6 +8,16 @@ import Html.Events as HE exposing(onClick, onInput)
 
 import Json.Decode exposing (int, list, string, float, Decoder)
 
+signin : Model -> Html Msg
+signin model =
+  if model.current_user.token == "" then
+    if model.registerUser == True then
+      registerUserView model
+    else
+      signinView model
+  else
+    signoutView model
+
 
 buttonBar model =
   div [id "buttonBar"] [
@@ -21,15 +31,20 @@ signinView model =
     , div [id "login"] [
        h3 [] [ text "Sign in"]
       , signinForm model
+      , button [onClick ToggleRegister] [text "Need to register?"]
     ]
    ]
 
-signin : Model -> Html Msg
-signin model =
-  if model.user_token == "" then
-    signinView model
-  else
-    signoutView model
+registerUserView : Model -> Html Msg
+registerUserView model =
+    div [] [
+    buttonBar model
+    , div [id "login"] [
+       h3 [] [ text "Sign up"]
+      , registerUserForm model
+      , button [onClick ToggleRegister] [text "Need to sign in?"]
+    ]
+   ]
 
 
 signinForm : Model -> Html Msg
@@ -44,12 +59,29 @@ signinForm model =
     -- , p [id "info"] [ text ("Token: " ++ model.user_token) ]
   ]
 
+registerUserForm : Model -> Html Msg
+registerUserForm model =
+   div [ id "loginForm"] [
+     input [id "name", type_ "text" , placeholder "Your name", onInput Name] []
+     , br [] [], br [] []
+     , input [id "username", type_ "text" , placeholder "Username", onInput Username] []
+     , br [] [], br [] []
+     , input [id "email", type_ "text" , placeholder "Email", onInput Email] []
+     , br [] [], br [] []
+     , input [id "password", type_ "text" , placeholder "Password", onInput Password] []
+     , br [] [], br [] []
+     , button [ id "loginButton", onClick Register ] [text "Si                                                                                 gn up"]
+     , br [] [], br [] []
+     -- , p [id "info"] [ text ("Token: " ++ model.user_token) ]
+   ]
+
+
 signoutView : Model -> Html Msg
 signoutView model =
   div [] [
     buttonBar model
     , div [id "login"] [
-       p [id "username"] [ text ("Signed in as " ++ model.username)]
+       p [id "username"] [ text ("Signed in as " ++ model.current_user.username)]
       , br [] [], br [] []
       , button [ id "logoutButton", onClick Signout ] [text "Sign out"]
       -- , p [id "info"] [ text model.info ]

@@ -6,16 +6,15 @@ import Navigation
 type alias Document = { title : String, author: String, text : String }
 type alias DocumentId = String
 type alias Author = { name : String, identifier: String, url: String, photo_url : String }
+type alias User = { name: String, username: String, email: String, password: String, token: String}
 
 type alias Model = {
      page: Page,
      info: String,
      errorMsg: String,
 
-     user_email: String,
-     user_password: String,
-     username: String,
-     user_token : String,
+     current_user: User,
+     registerUser: Bool,
 
      input_text: String,
      author_identifier: String,
@@ -42,12 +41,18 @@ type Msg
     | GoToNewDocument
     | GoToLogin
 
+    | UpdateSelectedDocument String
+
     | Email String
     | Password String
+    | Name String
+    | Username String
     | Login
-    | GetTokenCompleted (Result Http.Error String)
-    | UpdateSelectedDocument String
+    | Register
     | Signout
+    | ToggleRegister
+    | GetTokenCompleted (Result Http.Error String)
+
 
 type Page
    = ReaderPage

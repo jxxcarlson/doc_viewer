@@ -10273,6 +10273,10 @@ var _user$project$Types$Author = F4(
 	function (a, b, c, d) {
 		return {name: a, identifier: b, url: c, photo_url: d};
 	});
+var _user$project$Types$User = F5(
+	function (a, b, c, d, e) {
+		return {name: a, username: b, email: c, password: d, token: e};
+	});
 var _user$project$Types$Model = function (a) {
 	return function (b) {
 		return function (c) {
@@ -10285,11 +10289,7 @@ var _user$project$Types$Model = function (a) {
 									return function (j) {
 										return function (k) {
 											return function (l) {
-												return function (m) {
-													return function (n) {
-														return {page: a, info: b, errorMsg: c, user_email: d, user_password: e, username: f, user_token: g, input_text: h, author_identifier: i, selectedAuthor: j, authors: k, documents: l, selectedDocument: m, editor_text: n};
-													};
-												};
+												return {page: a, info: b, errorMsg: c, current_user: d, registerUser: e, input_text: f, author_identifier: g, selectedAuthor: h, authors: i, documents: j, selectedDocument: k, editor_text: l};
 											};
 										};
 									};
@@ -10302,19 +10302,27 @@ var _user$project$Types$Model = function (a) {
 		};
 	};
 };
-var _user$project$Types$Signout = {ctor: 'Signout'};
-var _user$project$Types$UpdateSelectedDocument = function (a) {
-	return {ctor: 'UpdateSelectedDocument', _0: a};
-};
 var _user$project$Types$GetTokenCompleted = function (a) {
 	return {ctor: 'GetTokenCompleted', _0: a};
 };
+var _user$project$Types$ToggleRegister = {ctor: 'ToggleRegister'};
+var _user$project$Types$Signout = {ctor: 'Signout'};
+var _user$project$Types$Register = {ctor: 'Register'};
 var _user$project$Types$Login = {ctor: 'Login'};
+var _user$project$Types$Username = function (a) {
+	return {ctor: 'Username', _0: a};
+};
+var _user$project$Types$Name = function (a) {
+	return {ctor: 'Name', _0: a};
+};
 var _user$project$Types$Password = function (a) {
 	return {ctor: 'Password', _0: a};
 };
 var _user$project$Types$Email = function (a) {
 	return {ctor: 'Email', _0: a};
+};
+var _user$project$Types$UpdateSelectedDocument = function (a) {
+	return {ctor: 'UpdateSelectedDocument', _0: a};
 };
 var _user$project$Types$GoToLogin = {ctor: 'GoToLogin'};
 var _user$project$Types$GoToNewDocument = {ctor: 'GoToNewDocument'};
@@ -10364,6 +10372,43 @@ var _user$project$Data_Document$documentDecoder = A3(
 var _user$project$Data_Document$document = function (jsonString) {
 	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Data_Document$documentDecoder, jsonString);
 };
+var _user$project$Data_Document$documentEncoder = function (model) {
+	return _elm_lang$core$Json_Encode$object(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'document',
+				_1: _elm_lang$core$Json_Encode$object(
+					{
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple2',
+							_0: 'title',
+							_1: _elm_lang$core$Json_Encode$string(model.selectedDocument.title)
+						},
+						_1: {
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: 'author',
+								_1: _elm_lang$core$Json_Encode$string(model.selectedDocument.author)
+							},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple2',
+									_0: 'text',
+									_1: _elm_lang$core$Json_Encode$string(model.selectedDocument.text)
+								},
+								_1: {ctor: '[]'}
+							}
+						}
+					})
+			},
+			_1: {ctor: '[]'}
+		});
+};
 var _user$project$Data_Document$Documents = function (a) {
 	return {documents: a};
 };
@@ -10383,10 +10428,8 @@ var _user$project$Data_Init$initialModel = {
 	page: _user$project$Types$ReaderPage,
 	info: 'No messages',
 	errorMsg: '',
-	user_email: '',
-	username: '',
-	user_password: '',
-	user_token: '',
+	current_user: A5(_user$project$Types$User, '', '', '', '', ''),
+	registerUser: false,
 	input_text: 'Carroll',
 	author_identifier: 'Carroll',
 	selectedAuthor: _user$project$Data_Init$author1,
@@ -10419,6 +10462,74 @@ var _user$project$Action_Document$updateDocuments = F2(
 			_0: _elm_lang$core$Native_Utils.update(
 				model,
 				{documents: documentsRecord.documents, selectedDocument: selectedDocument, info: 'Documents: HTTP request OK'}),
+			_1: _elm_lang$core$Platform_Cmd$none
+		};
+	});
+
+var _user$project$Action_User$signout = function (model) {
+	var updated_user = A5(_user$project$Types$User, '', '', '', '', '');
+	var user = model.current_user;
+	return {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			model,
+			{current_user: updated_user}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	};
+};
+var _user$project$Action_User$updateUsername = F2(
+	function (model, username) {
+		var user = model.current_user;
+		var updated_user = _elm_lang$core$Native_Utils.update(
+			user,
+			{username: username});
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.update(
+				model,
+				{current_user: updated_user}),
+			_1: _elm_lang$core$Platform_Cmd$none
+		};
+	});
+var _user$project$Action_User$updateName = F2(
+	function (model, name) {
+		var user = model.current_user;
+		var updated_user = _elm_lang$core$Native_Utils.update(
+			user,
+			{name: name});
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.update(
+				model,
+				{current_user: updated_user}),
+			_1: _elm_lang$core$Platform_Cmd$none
+		};
+	});
+var _user$project$Action_User$updatePassword = F2(
+	function (model, password) {
+		var user = model.current_user;
+		var updated_user = _elm_lang$core$Native_Utils.update(
+			user,
+			{password: password});
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.update(
+				model,
+				{current_user: updated_user}),
+			_1: _elm_lang$core$Platform_Cmd$none
+		};
+	});
+var _user$project$Action_User$updateEmail = F2(
+	function (model, email) {
+		var user = model.current_user;
+		var updated_user = _elm_lang$core$Native_Utils.update(
+			user,
+			{email: email});
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.update(
+				model,
+				{current_user: updated_user}),
 			_1: _elm_lang$core$Platform_Cmd$none
 		};
 	});
@@ -10458,7 +10569,52 @@ var _user$project$Data_Author$AuthorRecord = function (a) {
 	return {author: a};
 };
 
-var _user$project$Data_User$userEncoder = function (model) {
+var _user$project$Data_User$registerUserEncoder = function (model) {
+	return _elm_lang$core$Json_Encode$object(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'user',
+				_1: _elm_lang$core$Json_Encode$object(
+					{
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple2',
+							_0: 'name',
+							_1: _elm_lang$core$Json_Encode$string(model.current_user.name)
+						},
+						_1: {
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: 'username',
+								_1: _elm_lang$core$Json_Encode$string(model.current_user.username)
+							},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple2',
+									_0: 'email',
+									_1: _elm_lang$core$Json_Encode$string(model.current_user.email)
+								},
+								_1: {
+									ctor: '::',
+									_0: {
+										ctor: '_Tuple2',
+										_0: 'password',
+										_1: _elm_lang$core$Json_Encode$string(model.current_user.password)
+									},
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					})
+			},
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Data_User$signinEncoder = function (model) {
 	return _elm_lang$core$Json_Encode$object(
 		{
 			ctor: '::',
@@ -10471,14 +10627,14 @@ var _user$project$Data_User$userEncoder = function (model) {
 						_0: {
 							ctor: '_Tuple2',
 							_0: 'email',
-							_1: _elm_lang$core$Json_Encode$string(model.user_email)
+							_1: _elm_lang$core$Json_Encode$string(model.current_user.email)
 						},
 						_1: {
 							ctor: '::',
 							_0: {
 								ctor: '_Tuple2',
 								_0: 'password',
-								_1: _elm_lang$core$Json_Encode$string(model.user_password)
+								_1: _elm_lang$core$Json_Encode$string(model.current_user.password)
 							},
 							_1: {ctor: '[]'}
 						}
@@ -10811,6 +10967,7 @@ var _user$project$Request_Api$getAuthorUrlPrefix = A2(_elm_lang$core$Basics_ops[
 var _user$project$Request_Api$getAuthorsUrlPrefix = A2(_elm_lang$core$Basics_ops['++'], _user$project$Request_Api$api, 'authors?author=');
 var _user$project$Request_Api$initialDocumentsUrl = A2(_elm_lang$core$Basics_ops['++'], _user$project$Request_Api$api, 'documents/author=ezra_pound');
 var _user$project$Request_Api$loginUrl = A2(_elm_lang$core$Basics_ops['++'], _user$project$Request_Api$api, 'sessions');
+var _user$project$Request_Api$registerUserUrl = A2(_elm_lang$core$Basics_ops['++'], _user$project$Request_Api$api, 'users');
 
 var _user$project$Request_Author$getAuthors = function (author_identifier) {
 	var url = A2(_elm_lang$core$Basics_ops['++'], _user$project$Request_Api$getAuthorsUrlPrefix, author_identifier);
@@ -10830,7 +10987,7 @@ var _user$project$Request_Document$getDocuments = function (author_identifier) {
 };
 
 var _user$project$Utility$signinButtonText = function (model) {
-	return _elm_lang$core$Native_Utils.eq(model.user_token, '') ? 'Sign in' : 'Sign out';
+	return _elm_lang$core$Native_Utils.eq(model.current_user.token, '') ? 'Sign in' : 'Sign out';
 };
 
 var _user$project$Views_Reader$buttonBar = function (model) {
@@ -11151,6 +11308,197 @@ var _user$project$Views_NewDocument$newDocument = function (model) {
 		});
 };
 
+var _user$project$Views_Login$registerUserForm = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$id('loginForm'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$input,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$id('name'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$type_('text'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$placeholder('Your name'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onInput(_user$project$Types$Name),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				{ctor: '[]'}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$br,
+					{ctor: '[]'},
+					{ctor: '[]'}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$br,
+						{ctor: '[]'},
+						{ctor: '[]'}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$input,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$id('username'),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$type_('text'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$placeholder('Username'),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Events$onInput(_user$project$Types$Username),
+											_1: {ctor: '[]'}
+										}
+									}
+								}
+							},
+							{ctor: '[]'}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$br,
+								{ctor: '[]'},
+								{ctor: '[]'}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$br,
+									{ctor: '[]'},
+									{ctor: '[]'}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$input,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$id('email'),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$type_('text'),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html_Attributes$placeholder('Email'),
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$html$Html_Events$onInput(_user$project$Types$Email),
+														_1: {ctor: '[]'}
+													}
+												}
+											}
+										},
+										{ctor: '[]'}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$br,
+											{ctor: '[]'},
+											{ctor: '[]'}),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$br,
+												{ctor: '[]'},
+												{ctor: '[]'}),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$input,
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html_Attributes$id('password'),
+														_1: {
+															ctor: '::',
+															_0: _elm_lang$html$Html_Attributes$type_('text'),
+															_1: {
+																ctor: '::',
+																_0: _elm_lang$html$Html_Attributes$placeholder('Password'),
+																_1: {
+																	ctor: '::',
+																	_0: _elm_lang$html$Html_Events$onInput(_user$project$Types$Password),
+																	_1: {ctor: '[]'}
+																}
+															}
+														}
+													},
+													{ctor: '[]'}),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$br,
+														{ctor: '[]'},
+														{ctor: '[]'}),
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$br,
+															{ctor: '[]'},
+															{ctor: '[]'}),
+														_1: {
+															ctor: '::',
+															_0: A2(
+																_elm_lang$html$Html$button,
+																{
+																	ctor: '::',
+																	_0: _elm_lang$html$Html_Attributes$id('loginButton'),
+																	_1: {
+																		ctor: '::',
+																		_0: _elm_lang$html$Html_Events$onClick(_user$project$Types$Register),
+																		_1: {ctor: '[]'}
+																	}
+																},
+																{
+																	ctor: '::',
+																	_0: _elm_lang$html$Html$text('Si                                                                                 gn up'),
+																	_1: {ctor: '[]'}
+																}),
+															_1: {
+																ctor: '::',
+																_0: A2(
+																	_elm_lang$html$Html$br,
+																	{ctor: '[]'},
+																	{ctor: '[]'}),
+																_1: {
+																	ctor: '::',
+																	_0: A2(
+																		_elm_lang$html$Html$br,
+																		{ctor: '[]'},
+																		{ctor: '[]'}),
+																	_1: {ctor: '[]'}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		});
+};
 var _user$project$Views_Login$signinForm = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -11322,7 +11670,73 @@ var _user$project$Views_Login$signinView = function (model) {
 						_1: {
 							ctor: '::',
 							_0: _user$project$Views_Login$signinForm(model),
-							_1: {ctor: '[]'}
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$button,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Events$onClick(_user$project$Types$ToggleRegister),
+										_1: {ctor: '[]'}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Need to register?'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}
+						}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$Views_Login$registerUserView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _user$project$Views_Login$buttonBar(model),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$id('login'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$h3,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('Sign up'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: _user$project$Views_Login$registerUserForm(model),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$button,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Events$onClick(_user$project$Types$ToggleRegister),
+										_1: {ctor: '[]'}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Need to sign in?'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}
 						}
 					}),
 				_1: {ctor: '[]'}
@@ -11357,7 +11771,7 @@ var _user$project$Views_Login$signoutView = function (model) {
 							{
 								ctor: '::',
 								_0: _elm_lang$html$Html$text(
-									A2(_elm_lang$core$Basics_ops['++'], 'Signed in as ', model.username)),
+									A2(_elm_lang$core$Basics_ops['++'], 'Signed in as ', model.current_user.username)),
 								_1: {ctor: '[]'}
 							}),
 						_1: {
@@ -11400,10 +11814,16 @@ var _user$project$Views_Login$signoutView = function (model) {
 		});
 };
 var _user$project$Views_Login$signin = function (model) {
-	return _elm_lang$core$Native_Utils.eq(model.user_token, '') ? _user$project$Views_Login$signinView(model) : _user$project$Views_Login$signoutView(model);
+	return _elm_lang$core$Native_Utils.eq(model.current_user.token, '') ? (_elm_lang$core$Native_Utils.eq(model.registerUser, true) ? _user$project$Views_Login$registerUserView(model) : _user$project$Views_Login$signinView(model)) : _user$project$Views_Login$signoutView(model);
 };
 
 var _user$project$Request_User$tokenDecoder = A2(_elm_lang$core$Json_Decode$field, 'token', _elm_lang$core$Json_Decode$string);
+var _user$project$Request_User$registerUser = F2(
+	function (model, c) {
+		var body = _elm_lang$http$Http$jsonBody(
+			_user$project$Data_User$registerUserEncoder(model));
+		return A3(_elm_lang$http$Http$post, _user$project$Request_Api$registerUserUrl, body, _user$project$Request_User$tokenDecoder);
+	});
 var _user$project$Request_User$getTokenCompleted = F2(
 	function (model, result) {
 		var _p0 = result;
@@ -11412,13 +11832,16 @@ var _user$project$Request_User$getTokenCompleted = F2(
 			var _p1 = A2(_simonh1000$elm_jwt$Jwt$decodeToken, _user$project$Data_User$jwtDecoder, _p3);
 			if (_p1.ctor === 'Ok') {
 				var _p2 = _p1._0;
+				var user = model.current_user;
+				var updated_user = _elm_lang$core$Native_Utils.update(
+					user,
+					{username: _p2.username, token: _p3});
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							username: _p2.username,
-							user_token: _p3,
+							current_user: updated_user,
 							info: A2(_elm_lang$core$Basics_ops['++'], 'Succes: signed in as ', _p2.username),
 							page: _user$project$Types$ReaderPage
 						}),
@@ -11452,8 +11875,15 @@ var _user$project$Request_User$getTokenCompleted = F2(
 var _user$project$Request_User$loginUser = F2(
 	function (model, loginUrl) {
 		var body = _elm_lang$http$Http$jsonBody(
-			_user$project$Data_User$userEncoder(model));
+			_user$project$Data_User$signinEncoder(model));
 		return A3(_elm_lang$http$Http$post, loginUrl, body, _user$project$Request_User$tokenDecoder);
+	});
+var _user$project$Request_User$registerUserCmd = F2(
+	function (model, registerUserUrl) {
+		return A2(
+			_elm_lang$http$Http$send,
+			_user$project$Types$GetTokenCompleted,
+			A2(_user$project$Request_User$registerUser, model, registerUserUrl));
 	});
 var _user$project$Request_User$loginUserCmd = F2(
 	function (model, loginUrl) {
@@ -11637,38 +12067,38 @@ var _user$project$Main$update = F2(
 						{page: _user$project$Types$LoginPage}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
+			case 'ToggleRegister':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{registerUser: !model.registerUser}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'Name':
+				return A2(_user$project$Action_User$updateName, model, _p0._0);
+			case 'Username':
+				return A2(_user$project$Action_User$updateUsername, model, _p0._0);
 			case 'Email':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{user_email: _p0._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+				return A2(_user$project$Action_User$updateEmail, model, _p0._0);
 			case 'Password':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{user_password: _p0._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+				return A2(_user$project$Action_User$updatePassword, model, _p0._0);
 			case 'Login':
 				return {
 					ctor: '_Tuple2',
 					_0: model,
 					_1: A2(_user$project$Request_User$loginUserCmd, model, _user$project$Request_Api$loginUrl)
 				};
+			case 'Register':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: A2(_user$project$Request_User$registerUserCmd, model, _user$project$Request_Api$registerUserUrl)
+				};
 			case 'GetTokenCompleted':
 				return A2(_user$project$Request_User$getTokenCompleted, model, _p0._0);
 			case 'Signout':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{user_token: '', username: ''}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+				return _user$project$Action_User$signout(model);
 			default:
 				var currentDocument = model.selectedDocument;
 				var updatedDocument = _elm_lang$core$Native_Utils.update(
