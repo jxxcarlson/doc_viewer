@@ -105,7 +105,7 @@ update msg model =
       GoToEditor ->
         ( {model | page = EditorPage }, Cmd.none )
       GoToReader ->
-        ( {model | page = ReaderPage }, Cmd.none )
+        ( {model | page = ReaderPage, info = "" }, Cmd.none )
       GoToNewDocument ->
         ( {model | page = NewDocumentPage }, Cmd.none )
       GoToLogin ->

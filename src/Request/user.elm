@@ -48,15 +48,16 @@ getTokenCompleted model result =
                 updated_user = { user | username = value.username, token = newToken }
               in
                 ({model | current_user = updated_user,
-                  info = "Succes: signed in as " ++ value.username,
+                  info = "", -- "Success: signed in as " ++ value.username,
                   page = ReaderPage },
                 Cmd.none)
 
-             Err error ->({model | info = toString error}, Cmd.none)
+             Err error ->({model | info = "Could not get authorization"}, Cmd.none)
         Err error ->
             ( { model | errorMsg = (toString error),
-               info = (toString error)} , Cmd.none )
+               info = "Bad username or password"} , Cmd.none )
 
+--               info = "Error .. " ++ (toString error)} , Cmd.none )
 -- |> Debug.log "error in getTokenCompleted"
 
 registerUser : Model -> String -> Http.Request String

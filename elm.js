@@ -10426,7 +10426,7 @@ var _user$project$Data_Init$document0 = {title: 'Oops!', author: 'Nobody', text:
 var _user$project$Data_Init$author1 = {name: 'Lewis Carroll', identifier: 'lewis_carroll', photo_url: 'http://orig04.deviantart.net/8cd4/f/2011/167/8/a/jabberwocky_by_natzuurjk-d3j49so.png', url: 'https://www.poetryfoundation.org/poems-and-poets/poems/detail/42916'};
 var _user$project$Data_Init$initialModel = {
 	page: _user$project$Types$ReaderPage,
-	info: 'No messages',
+	info: '',
 	errorMsg: '',
 	current_user: A5(_user$project$Types$User, '', '', '', '', ''),
 	registerUser: false,
@@ -10473,7 +10473,7 @@ var _user$project$Action_User$signout = function (model) {
 		ctor: '_Tuple2',
 		_0: _elm_lang$core$Native_Utils.update(
 			model,
-			{current_user: updated_user}),
+			{current_user: updated_user, registerUser: false, info: ''}),
 		_1: _elm_lang$core$Platform_Cmd$none
 	};
 };
@@ -11482,7 +11482,22 @@ var _user$project$Views_Login$registerUserForm = function (model) {
 																		_elm_lang$html$Html$br,
 																		{ctor: '[]'},
 																		{ctor: '[]'}),
-																	_1: {ctor: '[]'}
+																	_1: {
+																		ctor: '::',
+																		_0: A2(
+																			_elm_lang$html$Html$p,
+																			{
+																				ctor: '::',
+																				_0: _elm_lang$html$Html_Attributes$id('info'),
+																				_1: {ctor: '[]'}
+																			},
+																			{
+																				ctor: '::',
+																				_0: _elm_lang$html$Html$text(model.info),
+																				_1: {ctor: '[]'}
+																			}),
+																		_1: {ctor: '[]'}
+																	}
 																}
 															}
 														}
@@ -11605,7 +11620,22 @@ var _user$project$Views_Login$signinForm = function (model) {
 												_elm_lang$html$Html$br,
 												{ctor: '[]'},
 												{ctor: '[]'}),
-											_1: {ctor: '[]'}
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$p,
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html_Attributes$id('info'),
+														_1: {ctor: '[]'}
+													},
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html$text(model.info),
+														_1: {ctor: '[]'}
+													}),
+												_1: {ctor: '[]'}
+											}
 										}
 									}
 								}
@@ -11804,7 +11834,22 @@ var _user$project$Views_Login$signoutView = function (model) {
 											_0: _elm_lang$html$Html$text('Sign out'),
 											_1: {ctor: '[]'}
 										}),
-									_1: {ctor: '[]'}
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$p,
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$id('info'),
+												_1: {ctor: '[]'}
+											},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text(model.info),
+												_1: {ctor: '[]'}
+											}),
+										_1: {ctor: '[]'}
+									}
 								}
 							}
 						}
@@ -11828,23 +11873,18 @@ var _user$project$Request_User$getTokenCompleted = F2(
 	function (model, result) {
 		var _p0 = result;
 		if (_p0.ctor === 'Ok') {
-			var _p3 = _p0._0;
-			var _p1 = A2(_simonh1000$elm_jwt$Jwt$decodeToken, _user$project$Data_User$jwtDecoder, _p3);
+			var _p2 = _p0._0;
+			var _p1 = A2(_simonh1000$elm_jwt$Jwt$decodeToken, _user$project$Data_User$jwtDecoder, _p2);
 			if (_p1.ctor === 'Ok') {
-				var _p2 = _p1._0;
 				var user = model.current_user;
 				var updated_user = _elm_lang$core$Native_Utils.update(
 					user,
-					{username: _p2.username, token: _p3});
+					{username: _p1._0.username, token: _p2});
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{
-							current_user: updated_user,
-							info: A2(_elm_lang$core$Basics_ops['++'], 'Succes: signed in as ', _p2.username),
-							page: _user$project$Types$ReaderPage
-						}),
+						{current_user: updated_user, info: '', page: _user$project$Types$ReaderPage}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			} else {
@@ -11852,21 +11892,18 @@ var _user$project$Request_User$getTokenCompleted = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{
-							info: _elm_lang$core$Basics$toString(_p1._0)
-						}),
+						{info: 'Could not get authorization'}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			}
 		} else {
-			var _p4 = _p0._0;
 			return {
 				ctor: '_Tuple2',
 				_0: _elm_lang$core$Native_Utils.update(
 					model,
 					{
-						errorMsg: _elm_lang$core$Basics$toString(_p4),
-						info: _elm_lang$core$Basics$toString(_p4)
+						errorMsg: _elm_lang$core$Basics$toString(_p0._0),
+						info: 'Bad username or password'
 					}),
 				_1: _elm_lang$core$Platform_Cmd$none
 			};
@@ -12048,7 +12085,7 @@ var _user$project$Main$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{page: _user$project$Types$ReaderPage}),
+						{page: _user$project$Types$ReaderPage, info: ''}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'GoToNewDocument':

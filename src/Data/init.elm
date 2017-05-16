@@ -47,7 +47,7 @@ All mimsy were the borogoves,
 initialModel : Model
 initialModel = {
      page = ReaderPage
-     , info = "No messages"
+     , info = ""
      , errorMsg = ""
      , current_user = User "" "" "" "" ""
      , registerUser = False

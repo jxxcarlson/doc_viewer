@@ -43,4 +43,4 @@ signout model =
     user = model.current_user
     updated_user = User "" "" "" "" ""
   in
-    ( { model | current_user = updated_user } , Cmd.none )
+    ( { model | current_user = updated_user, registerUser = False, info = "" } , Cmd.none )
