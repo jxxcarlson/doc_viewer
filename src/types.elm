@@ -48,6 +48,7 @@ type Msg
     | UpdateSelectedDocument String
 
     | InputTitle String
+    | InputAuthor String
 
     | Email String
     | Password String

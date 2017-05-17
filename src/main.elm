@@ -26,6 +26,8 @@ import Request.Api exposing(loginUrl, registerUserUrl)
 import Action.Document exposing(updateDocuments)
 import Action.User exposing(..)
 
+import Utility exposing(normalizeString)
+
 -- import Routing exposing(parseLocation)
 
 -- The view is a function of the current page
@@ -114,12 +116,11 @@ update msg model =
         ( {model | registerUser = not model.registerUser }, Cmd.none )
 
       InputTitle title ->
-        let
-          oldDocument = model.selectedDocument
-          newDocument = { oldDocument | title = title }
-        in
-          ( {model | selectedDocument = newDocument}, Cmd.none )
+        Action.Document.updateTitle model title
 
+      InputAuthor author ->
+        Action.Document.updateAuthor model author
+        
 
       Name name ->
         updateName model name
