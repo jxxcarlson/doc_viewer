@@ -14,7 +14,7 @@ buttonBar model =
   div [id "buttonBar"] [
     button [onClick GoToLogin] [text (signinButtonText model)]
     , button [onClick GoToEditor, class "anotherButton"] [text "Edit"]
-    , button [onClick GoToNewDocument, class "anotherButton"] [text "New"]
+    --, button [onClick GoToNewDocument, class "anotherButton"] [text "New"]
   ]
 
 reader model =

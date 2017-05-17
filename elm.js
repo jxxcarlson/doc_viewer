@@ -11031,26 +11031,7 @@ var _user$project$Views_Reader$buttonBar = function (model) {
 						_0: _elm_lang$html$Html$text('Edit'),
 						_1: {ctor: '[]'}
 					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$button,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onClick(_user$project$Types$GoToNewDocument),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('anotherButton'),
-								_1: {ctor: '[]'}
-							}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('New'),
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				}
+				_1: {ctor: '[]'}
 			}
 		});
 };
