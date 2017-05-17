@@ -3,7 +3,8 @@ module Types exposing(..)
 import Http
 import Navigation
 
-type alias Document = { title : String, author: String, text : String }
+type alias Document = { title : String, author: String,
+    identifier: String, author_identifier: String, text : String }
 type alias DocumentId = String
 type alias Author = { name : String, identifier: String, url: String, photo_url : String }
 type alias User = { name: String, username: String, email: String, password: String, token: String}
@@ -16,8 +17,11 @@ type alias Model = {
      current_user: User,
      registerUser: Bool,
 
+     -- Text inputs
      input_text: String,
      author_identifier: String,
+
+
      selectedAuthor: Author,
      authors: List Author,
      documents: List Document,
@@ -42,6 +46,8 @@ type Msg
     | GoToLogin
 
     | UpdateSelectedDocument String
+
+    | InputTitle String
 
     | Email String
     | Password String

@@ -113,6 +113,13 @@ update msg model =
       ToggleRegister ->
         ( {model | registerUser = not model.registerUser }, Cmd.none )
 
+      InputTitle title ->
+        let
+          oldDocument = model.selectedDocument
+          newDocument = { oldDocument | title = title }
+        in
+          ( {model | selectedDocument = newDocument}, Cmd.none )
+
 
       Name name ->
         updateName model name

@@ -34,6 +34,8 @@ documentDecoder =
   decode Document
     |> JPipeline.required "title" Decode.string
     |> JPipeline.required "author" Decode.string
+    |> JPipeline.required "identifier" Decode.string
+    |> JPipeline.required "author_identifier" Decode.string
     |> JPipeline.required "text" Decode.string
 
 documentsDecoder : Decoder Documents

@@ -10265,9 +10265,9 @@ var _simonh1000$elm_jwt$Jwt$sendCheckExpired = F3(
 					_elm_lang$http$Http$toTask(request))));
 	});
 
-var _user$project$Types$Document = F3(
-	function (a, b, c) {
-		return {title: a, author: b, text: c};
+var _user$project$Types$Document = F5(
+	function (a, b, c, d, e) {
+		return {title: a, author: b, identifier: c, author_identifier: d, text: e};
 	});
 var _user$project$Types$Author = F4(
 	function (a, b, c, d) {
@@ -10321,6 +10321,9 @@ var _user$project$Types$Password = function (a) {
 var _user$project$Types$Email = function (a) {
 	return {ctor: 'Email', _0: a};
 };
+var _user$project$Types$InputTitle = function (a) {
+	return {ctor: 'InputTitle', _0: a};
+};
 var _user$project$Types$UpdateSelectedDocument = function (a) {
 	return {ctor: 'UpdateSelectedDocument', _0: a};
 };
@@ -10362,13 +10365,21 @@ var _user$project$Data_Document$documentDecoder = A3(
 	_elm_lang$core$Json_Decode$string,
 	A3(
 		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-		'author',
+		'author_identifier',
 		_elm_lang$core$Json_Decode$string,
 		A3(
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-			'title',
+			'identifier',
 			_elm_lang$core$Json_Decode$string,
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Types$Document))));
+			A3(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+				'author',
+				_elm_lang$core$Json_Decode$string,
+				A3(
+					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+					'title',
+					_elm_lang$core$Json_Decode$string,
+					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Types$Document))))));
 var _user$project$Data_Document$document = function (jsonString) {
 	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Data_Document$documentDecoder, jsonString);
 };
@@ -10421,8 +10432,8 @@ var _user$project$Data_Document$documents = function (jsonString) {
 	return A2(_elm_lang$core$Json_Decode$decodeString, _user$project$Data_Document$documentsDecoder, jsonString);
 };
 
-var _user$project$Data_Init$document1 = {title: 'Jabberwocky', author: 'Lewis Carroll', text: '‘Twas brillig, and the slithy toves\n   Did gyre and gimble in the wabe;\nAll mimsy were the borogoves,\n   And the mome raths outgrabe.\n\n“Beware the Jabberwock, my son\n   The jaws that bite, the claws that catch!\nBeware the Jubjub bird, and shun\n   The frumious Bandersnatch!”\n\nHe took his vorpal sword in hand;\n   Long time the manxome foe he sought—\nSo rested he by the Tumtum tree,\n   And stood awhile in thought.\n\nAnd, as in uffish thought he stood,\n   The Jabberwock, with eyes of flame,\nCame whiffling through the tulgey wood,\n   And burbled as it came!\n\nOne, two! One, two! And through and through\n   The vorpal blade went snicker-snack!\nHe left it dead, and with its head\n   He went galumphing back.\n\n“And hast thou slain the Jabberwock?\n   Come to my arms, my beamish boy!\nO frabjous day! Callooh! Callay!”\n   He chortled in his joy.\n\n‘Twas brillig, and the slithy toves\n   Did gyre and gimble in the wabe;\nAll mimsy were the borogoves,\n   And the mome raths outgrabe.\n'};
-var _user$project$Data_Init$document0 = {title: 'Oops!', author: 'Nobody', text: 'Sorry, we couldn\'t find that document'};
+var _user$project$Data_Init$document1 = {title: 'Jabberwocky', author: 'Lewis Carroll', identifier: 'jabberwocky', author_identifier: 'lewis_carroll', text: '‘Twas brillig, and the slithy toves\n   Did gyre and gimble in the wabe;\nAll mimsy were the borogoves,\n   And the mome raths outgrabe.\n\n“Beware the Jabberwock, my son\n   The jaws that bite, the claws that catch!\nBeware the Jubjub bird, and shun\n   The frumious Bandersnatch!”\n\nHe took his vorpal sword in hand;\n   Long time the manxome foe he sought—\nSo rested he by the Tumtum tree,\n   And stood awhile in thought.\n\nAnd, as in uffish thought he stood,\n   The Jabberwock, with eyes of flame,\nCame whiffling through the tulgey wood,\n   And burbled as it came!\n\nOne, two! One, two! And through and through\n   The vorpal blade went snicker-snack!\nHe left it dead, and with its head\n   He went galumphing back.\n\n“And hast thou slain the Jabberwock?\n   Come to my arms, my beamish boy!\nO frabjous day! Callooh! Callay!”\n   He chortled in his joy.\n\n‘Twas brillig, and the slithy toves\n   Did gyre and gimble in the wabe;\nAll mimsy were the borogoves,\n   And the mome raths outgrabe.\n'};
+var _user$project$Data_Init$document0 = {title: 'Oops!', author: 'Nobody', identifier: 'default', author_identifier: 'nobody', text: 'Sorry, we couldn\'t find that document'};
 var _user$project$Data_Init$author1 = {name: 'Lewis Carroll', identifier: 'lewis_carroll', photo_url: 'http://orig04.deviantart.net/8cd4/f/2011/167/8/a/jabberwocky_by_natzuurjk-d3j49so.png', url: 'https://www.poetryfoundation.org/poems-and-poets/poems/detail/42916'};
 var _user$project$Data_Init$initialModel = {
 	page: _user$project$Types$ReaderPage,
@@ -10986,6 +10997,17 @@ var _user$project$Request_Document$getDocuments = function (author_identifier) {
 	return A2(_elm_lang$http$Http$send, _user$project$Types$GetDocuments, request);
 };
 
+var _user$project$Utility$normalizeString = function (str) {
+	return A2(
+		_elm_lang$core$String$map,
+		function (c) {
+			return _elm_lang$core$Native_Utils.eq(
+				c,
+				_elm_lang$core$Native_Utils.chr(' ')) ? _elm_lang$core$Native_Utils.chr('_') : c;
+		},
+		_elm_lang$core$String$toLower(
+			_elm_lang$core$String$trim(str)));
+};
 var _user$project$Utility$signinButtonText = function (model) {
 	return _elm_lang$core$Native_Utils.eq(model.current_user.token, '') ? 'Sign in' : 'Sign out';
 };
@@ -12091,6 +12113,18 @@ var _user$project$Main$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{registerUser: !model.registerUser}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'InputTitle':
+				var oldDocument = model.selectedDocument;
+				var newDocument = _elm_lang$core$Native_Utils.update(
+					oldDocument,
+					{title: _p0._0});
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{selectedDocument: newDocument}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'Name':

@@ -8,3 +8,7 @@ signinButtonText model =
     "Sign in"
   else
     "Sign out"
+
+normalizeString : String -> String
+normalizeString str =
+  str |> String.trim |> String.toLower |> String.map (\c -> if c == ' ' then '_' else c)

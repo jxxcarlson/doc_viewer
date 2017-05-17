@@ -4,9 +4,12 @@ import Types exposing(..)
 
 author1 = {name = "Lewis Carroll", identifier = "lewis_carroll", photo_url = "http://orig04.deviantart.net/8cd4/f/2011/167/8/a/jabberwocky_by_natzuurjk-d3j49so.png", url = "https://www.poetryfoundation.org/poems-and-poets/poems/detail/42916"}
 
-document0 = {title = "Oops!", author = "Nobody", text = "Sorry, we couldn't find that document"}
+document0 = {title = "Oops!", author = "Nobody",
+   identifier = "default", author_identifier = "nobody",
+   text = "Sorry, we couldn't find that document"}
 
-document1 = {title = "Jabberwocky", author = "Lewis Carroll", text = """‘Twas brillig, and the slithy toves
+document1 = {title = "Jabberwocky", author = "Lewis Carroll",
+  identifier = "jabberwocky", author_identifier = "lewis_carroll", text = """‘Twas brillig, and the slithy toves
    Did gyre and gimble in the wabe;
 All mimsy were the borogoves,
    And the mome raths outgrabe.
